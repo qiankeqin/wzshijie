@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title></title>
+<script type="text/javascript" src="/js/easemob/jquery-1.11.1.js"></script>
+<script type="text/javascript">
+//模拟微信登录
+function login(){
+	var membersWxID = $("#membersWxID").val();
+	var cfId = $("#state").val();
+	if(membersWxID==null||membersWxID==""){
+		WeixinJSBridge.call('closeWindow');
+	}
+	$.ajax({
+		url : "/user/kiklogin",
+		type : "post",
+		data :"params={membersWxID:'"+membersWxID+"',cfId:'"+cfId+"'}",
+		success : function(r) {
+			if(r.data.state=="false"){
+				$("#form1").submit();
+			}else{
+				if(cfId=='fabu'){
+					location="/helpPage";
+				}else if(cfId=='account'){
+					location="/accountsPage/myAccounts";
+				}else if(cfId.substring(0,2)=="v2"){
+					var arr = cfId.split("-");
+					location="/helpPage/toGive/"+arr[1]+"?membersWxID="+membersWxID;
+				}else{
+					location="/helpPage/crowdfundDetailWx/"+cfId*1+"?membersWxID="+membersWxID;
+				}
+				
+			}
+		}
+	});	
+}
+
+
+</script>
+</head>
+
+<body onload="login()">
+<form action="/login" id="form1" method="post" style="display: none;">
+<input  id="membersWxID" name="membersWxID" value="${members.membersWxID}"/>
+<input name="membersImage" value="${members.membersImage}"/>
+<input name="membersNickName" value="${members.membersNickName}"/>
+<input name="membersSex" value="${members.membersSex}"/>
+<input name="state"  id="state" value="${state}"/>
+</form>
+</body>
+</html>

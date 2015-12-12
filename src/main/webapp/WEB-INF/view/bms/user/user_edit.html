@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台助理管理</title>
+</head>
+<body>
+
+
+	<table id="f_edit">
+		<tr>
+			<td align="right">用户ID :</td>
+			<td align="left"><input name="userID" value="${users.userID}"
+				readonly="readonly" /><font color="red">*不可更改</font></td>
+		</tr>
+		<tr>
+			<td align="right">登录姓名:</td>
+			<td align="left"><input name="userName" id="userName"
+				value="${users.userName}" style="width: 150px;" /></td>
+		</tr>
+		<tr>
+			<td align="right">真实姓名:</td>
+			<td align="left"><input name="realName" id="realName"
+				value="${users.realName}" style="width: 150px;" /></td>
+		</tr>
+		<tr>
+			<td align="right">邮箱:</td>
+			<td align="left"><input name="email" value="${users.email}" /></td>
+		</tr>
+		<tr>
+			<td align="right">手机号:</td>
+			<td align="left"><input name="telephone"
+				value="${users.telephone}" /></td>
+		</tr>
+
+		<tr>
+			<td align="right">角色:</td>
+			<td align="left">
+				<div style="display: inline-block;">
+					<#list roles as item> <label><input type="checkbox"
+						value="${item.roleID}" style="vertical-align: middle;"<#if
+						item.isCheck==1>checked</#if> />${item.roleName}</label> </#list> <input
+						name="roleID" id="tempRoleID" type="hidden" value="">
+				</div>
+			</td>
+		</tr>
+
+
+		<tr>
+			<td align="right">性别 :</td>
+			<td align="left"><input name="sex" value="1"<#if
+				users.sex=='1'>checked</#if> type="radio" /><span>男</span><input
+				name="sex" value="2"<#if users.sex=='2'>checked</#if>
+				type="radio" /><span>女</span></td>
+		</tr>
+
+		<!-- <tr>
+			<td align="right">用户是否存在:</td>
+			<td align="left"><input name="isExist" value="0"<#if
+				users.isExist=='0'>checked</#if> type="radio" /><span>存在</span><input
+				name="isExist" value="1"<#if users.isExist=='1'>checked</#if>
+				type="radio" /><span>不存在</span></td>
+		</tr> -->
+	</table>
+
+	<p style="width: 150px; margin-left: auto; margin-right: auto;">
+		<input type="button" value="  提 交  " id="lagoqu_btn_edit" />&nbsp;&nbsp;
+	</p>
+
+	<script type="text/javascript">
+	 	
+			function isMobil(s) {
+			    return s.match(/^[1][3,4,5,8,7][0-9]{9}$/);
+			}
+			function isEmail(s) {
+			    return s.match(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+			} 
+			
+			$("#lagoqu_btn_edit").click(function(){
+
+				if($("#f_edit").find("input[name='userName']").val()==""){
+					$.messager.alert("系统提示", "用户名不能为空！", 'info');
+					return;
+				}
+				if($("#f_edit").find("input[name='realName']").val()==""){
+					$.messager.alert("系统提示", "真实姓名不能为空！", 'info');
+					return;
+				}
+				if($("#f_edit").find("input[name='email']").val()==""){
+					$.messager.alert("系统提示", "邮箱不能为空！", 'info');
+					return;
+				}
+				if(!isEmail($("#f_edit").find("input[name='email']").val())){
+					$.messager.alert("系统提示", "邮箱格式不正确！", 'info');
+					return;
+				}
+				if($("#f_edit").find("input[name='telephone']").val()==""){
+					$.messager.alert("系统提示", "电话不能为空！", 'info');
+					return;
+				}
+				if(!isMobil($.trim($("#f_edit").find("input[name='telephone']").val()))){
+					$.messager.alert("系统提示", "手机格式不正确！", 'info');
+					return;
+				}	
+				
+				var roleIds = "";
+				var roleNames = "";
+				if($('#f_edit input[type="checkbox"]:checked').length>0){
+					$('#f_edit input[type="checkbox"]:checked').each(function(){ 
+						roleIds += $(this).val()+",";
+						roleNames += $(this).parent().text()+",";
+					}); 
+				}else{
+					$.messager.alert("系统提示", "至少选一种角色！", 'info');
+					return;
+				}
+  				
+				$.ajax({
+					url : '/ajax/bms/user/edituser',
+					type : 'get',
+					dataType : "json",
+					data : {
+						userID:$("#f_edit").find("input[name='userID']").val(),
+						userName:$.trim($("#f_edit").find("input[name='userName']").val()),																
+						realName:$("#f_edit").find("input[name='realName']").val(),
+						email:$("#f_edit").find("input[name='email']").val(),
+						telephone:$("#f_edit").find("input[name='telephone']").val(),												
+					 	roleID:roleIds.substring(0,roleIds.length-1), 						
+						roleName:roleNames.substring(0,roleNames.length-1),						
+						sex:$('#f_edit input[type="radio"]:checked').val()					
+					},					
+					success: function(data){
+						$.messager.alert('系统提示', "用户修改成功！", 'info');
+						closeW(WEditId);
+						$dg.datagrid('reload');
+				    },
+				    error:function(){
+				    	$.messager.alert('系统提示', "error！", 'info');
+			 	    }
+				});	
+			});	
+		</script>
+</body>
+</html>

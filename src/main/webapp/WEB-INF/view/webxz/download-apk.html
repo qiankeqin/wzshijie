@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>玩赚世界</title>
+<style>
+* {padding:0;margin:0;}
+.apk img {width:100%;}
+.apk-2 {position:relative;}
+.apk-a {position:absolute;width:60%;top:25%;left:50%;margin-left:-30%;}
+.apk-a img {width:46%;margin:0 2%;}
+.apk-6 {position:relative;}
+.apk-b {position:absolute;width:60%;top:40%;left:50%;margin-left:-30%;}
+.apk-b img {width:46%;margin:0 2%;}
+.apk-fx {position:fixed;top:0;left:0;width:200%;height:200%;z-index:150;_position:absolute;width:100%;background:url(/images/index/apk-bg_03.png);_background:none;display:none;}
+.apk-fx img {width:100%;}
+</style>
+<script type="text/javascript" src="/js/web/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$(".download_a").click(function(){
+		if(navigator.userAgent.toLowerCase().match(/MicroMessenger/i)=="micromessenger"){
+			$(".apk").hide();
+			$(".apk-fx").show();	
+		}else{
+			window.open('/data/wzsj.apk');	
+		}	
+	});	
+	$(".download_b").click(function(){
+		if(navigator.userAgent.toLowerCase().match(/MicroMessenger/i)=="micromessenger"){
+			$(".apk").hide();
+			$(".apk-fx").show();	
+		}else{
+			window.open('https://itunes.apple.com/cn/app/wan-zhuan-shi-jie/id1039765356?mt=8');	
+		}	
+	});
+});
+</script>
+
+</head>
+<body>
+<div class="apk">
+	<div class="apk-1"><img src="/images/index/apk-1_01.jpg" /></div>
+	<div class="apk-2"><img src="/images/index/apk-2_02.jpg" /><div class="apk-a download_b"><a href="https://itunes.apple.com/cn/app/wan-zhuan-shi-jie/id1039765356?mt=8" ><img src="/images/index/icon_b_33_11.png"/></a><a class="download_a"><img src="/images/index/icon_b_34_11.png"/></a></div></div>
+	<div class="apk-3"><img src="/images/index/apk-3_03.jpg" /></div>
+	<div class="apk-4"><img src="/images/index/apk-4_04.jpg" /></div>
+	<div class="apk-5"><img src="/images/index/apk-5_05.jpg" /></div>
+	<div class="apk-6"><img src="/images/index/apk-6_06.png" /><div class="apk-b download_b"><a href="https://itunes.apple.com/cn/app/wan-zhuan-shi-jie/id1039765356?mt=8" ><img src="/images/index/icon_b_50_46.png"/></a><a class="download_a"><img src="/images/index/icon_b_51_48.png"/></a></div></div>
+	<div class="apk-7"><img src="/images/index/apk-7_07.png" /></div>
+</div>
+<div class="apk-fx"><img src="/images/index/apk-fx_02.png" /></div>
+</body>

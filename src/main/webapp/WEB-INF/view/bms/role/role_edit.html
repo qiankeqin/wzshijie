@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>角色编辑</title>
+</head>
+
+<body>
+    <table>
+      <tr>
+        <td>角色名:</td>
+        <td><input name="roleName" value="${roles.roleName}" id="roleName"><font color="red">*</font></td>
+      </tr>
+      <tr>
+       <tr>
+        <td>菜单权限 :</td>
+        <td>
+	        <div id="lagoqu_tree" style="border:1px solid #ccc;width:400px;">
+	        </div>
+        </td>
+      </tr>
+      </tr>
+      <tr>
+        <td>描述 :</td>
+        <td><textarea name="description" rows="3" cols="20" id="lagoqu_dp_edit">${roles.description}</textarea></td>
+      </tr>
+    </table>
+
+    <p style="margin-left:auto;margin-right:auto;width:200px;">
+      <input type="button" value="提交" id="lagoqu_btn_edit"/>
+    </p>
+
+
+  <script type="text/javascript">
+  var menuArr = '${roles.menuID}';
+  var menuNodes = menuArr.split(',');
+  (function(){
+		$('#lagoqu_tree').tree({   
+			url:'/ajax/bms/menu/add_edit_Tree',			
+		    method:'get',
+		    animate:true,
+		    checkbox:true,
+	  		cascadeCheck:true,
+	  		lines:false,
+	  		formatter:function(node){
+	  			for(var i = 0;i<menuNodes.length;i++){
+	  				if(node.id == menuNodes[i] && node.parentId !=0){
+	  					node.checked = true;
+	  				}
+	  			}
+	  			return node.text;
+	  		}
+		});  
+	  })();
+  
+	  $("#lagoqu_btn_edit").click(function(){
+			if($("#lagoqu_rn_edit").val()==""){
+				$.messager.alert("系统提示", "权限名称不能为空！", 'info');
+				return;
+			}
+			var rows1 = $('#lagoqu_tree').tree('getChecked','indeterminate');
+			var rows = $('#lagoqu_tree').tree('getChecked');
+			
+			for(var i=0;i<rows1.length;i++){
+				rows.push(rows1[i]);
+			}
+			if (rows.length == 0) {
+				$.messager.alert("系统提示", "至少选择一项菜单数据！", 'info');
+				return;
+			}
+			var menuIds = "";
+			var menuNames = "";
+			for (var i = 0; i < rows.length; i++) {
+				menuIds+=rows[i].id+",";
+				menuNames+=rows[i].text+",";
+			}
+			
+		  $.ajax({
+				url : '/ajax/bms/role/editrole',
+				type : 'post',
+				data : {
+					roleID:${roles.roleID},
+					roleName:$.trim($("#roleName").val()),
+					description:$.trim($("#lagoqu_dp_edit").val()),
+					menuName:menuNames.substring(0,menuNames.length-1),
+					menuID:menuIds.substring(0,menuIds.length-1)
+				},
+				success: function(data){
+					$.messager.alert('系统提示', "修改成功！", 'info');
+					closeW(WEditId);
+					$dg.datagrid('reload');
+			    },
+			    error:function(){
+			    	$.messager.alert('系统提示', "error！", 'info');
+		 	    }
+			});
+	});
+	</script>
+</body>
+</html>

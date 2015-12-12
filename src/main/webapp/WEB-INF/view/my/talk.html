@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>对话</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<style>
+#emotionUL li {float:left;}
+</style>
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/easemob/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="/js/easemob/strophe-custom-2.0.1.js"></script>
+<script type="text/javascript" src="/js/easemob/json2.js"></script>
+<script type="text/javascript" src="/js/easemob/easemob.im-1.0.7.js"></script>
+<script type="text/javascript" src="/js/easemob/bootstrap.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript" src="/js/common/easemob.js"></script>
+<script type="text/javascript">
+var talkMeid=${crrrentMember.membersID};
+var talkMeNickName='${crrrentMember.membersNickName}';
+var talkMeImage='${crrrentMember.membersImage}';
+var talkMePassword='${crrrentMember.membersPassword}';
+var membersID = ${mb.membersID};         //用户ID
+var membersNickName = '${mb.membersNickName}';  //用户昵称
+var membersImage = '${mb.membersImage}';        //用户头像
+
+
+function common(){
+	var bH = $(".back").height();
+	$(".title").height(bH).css("line-height",bH+"px");
+	var tIh = $(".talk").find("img").height();
+	$(".talk").css("padding-top",(bH-tIh)/2+"px");
+	$(".talk").height(bH-(bH-tIh)/2);
+	var tH = $(".top").outerHeight();
+	$(".top_zw").height(tH);
+	
+	var tH = $(".talk_footer").outerHeight();
+	$(".talk_footer_zw").height(tH);
+	
+	$("body").mousedown(function(){
+		$(".talk_footer h2").hide();
+	});
+	
+	/*$(".js_btn_jiahao").click(function(){
+		var tD = $(this).siblings("h2").css("display");
+		if(tD=="none"){
+			$(this).siblings("h2").show();
+		}
+		return false;
+	});*/
+};
+</script>
+</head>
+
+<body onload="common()">
+<div class="top_zw"></div>
+
+
+<div class="talk_ul">
+	<ul id="talk_msg_ul">
+		
+	</ul>
+</div>
+
+<div class="talk_footer_zw"></div>
+<div class="talk_footer">
+	<label><font><input type="text" name="talkcontent" id="talkcontent"/></font></label>
+	<strong><img src="/images/icon_talk_bq_29.png" onclick="showEmotionDialog()"/></strong>
+	<em><a href="javaScript:void(0)" onclick="send()">发送</a></em>
+	<div class="clear"></div>
+	<div id="wl_faces_box" class="wl_faces_box">
+		<div class="wl_faces_content">
+			<div id="wl_faces_main" class="wl_faces_main">
+				<ul id="emotionUL">
+				</ul>
+			</div>
+		</div>
+		<div class="wlf_icon"></div>
+	</div>
+	<h2><a href="###"><img src="/images/talk_btn_a_03.png" /></a><a href="###"><img src="/images/talk_btn_b_03.png" /></a></h2>
+</div>
+<div class="btn_a"><a href="/friendsPage"><img src="/images/icon_btn_a_03.png" /></a></div>
+</body>
+</html>

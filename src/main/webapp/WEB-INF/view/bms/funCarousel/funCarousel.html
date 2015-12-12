@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>拉钩去——后台</title>
+<#include "bms/common/head_include.html">
+<!-- 上传图片 -->
+<link rel="stylesheet" type="text/css" href="/plugin/uploadify/uploadify.css"/>
+<script type="text/javascript" src="/plugin/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript" src="/plugin/easyui/datagrid-dnd.js"></script>
+</head>
+
+<body>
+  <div class="easyui-panel" style="padding: 10px; background: #fafafa;">
+  </div>
+  <div class="easyui-panel" style="padding: 5px; background: #fafafa;">
+    <a href="javascript: openWAdd()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a> 
+    <a href="javascript:bathDelete()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">批量删除</a>
+  </div>
+  <table id="dg"></table>
+  <script type="text/javascript">
+			var $dg = $('#dg');//表格 列表
+			var WAddId = "WAdd";//窗口id 添加
+			var WEditId = "WEdit";//窗口id 修改
+			$dg.datagrid({
+						url : '/ajax/bms/funCarousel/list',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : true
+						} ] ],
+						idField : 'funCarouselId',//标识字段
+						columns : [ [
+								{
+									field : 'Id',
+									title : 'funCarouselId',
+									hidden:true,
+									align:'center'
+								},{
+									field : 'funID',
+									title : '哪好玩ID',
+									width:120,
+									align:'center'
+								},
+								{
+									field : 'description',
+									title : '名称',
+									width:200,
+									align:'center'
+								},
+								{
+									field : 'createTime',
+									title : '创建时间',
+									width:140,
+									align:'center',
+									formatter : function(value, row, index) {
+										return new Date(value).format("yyyy-MM-dd HH:mm:ss");
+									}
+								},
+								{
+									field : 'operate',
+									title : '操作',
+									width:300,
+									align:'center',
+									formatter : function(value, row, index) {
+										return '<a href="javascript:openWEdit('
+												+ row.funCarouselId
+												+ ')" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>'
+												+ '&nbsp;<a href="javascript:del('
+												+ row.funCarouselId
+												+ ')" class="easyui-linkbutton" data-options="iconCls:\'icon-remove\'" plain="true">删除</a>';
+									}
+								} ] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+			
+			/**
+			 * 弹出添加窗口
+			 */
+			function openWAdd() {
+				var wUrl = "/bms/funCarousel/add";
+				openW(WAddId, "添加", wUrl, "600px");
+			}
+			/**
+			 * 弹出编辑窗口
+			 */
+			function openWEdit(id) {
+				var wUrl = "/bms/funCarousel/edit?id=" + id;
+				openW(WEditId, "编辑", wUrl, "900px");
+			}
+			
+			function del(id) {
+				$.messager.confirm('系统提示', '确定要删除此条数据吗?', function(r) {
+					if (r) {
+						var ids = [];
+						ids.push(id);
+						ajaxDel(ids);
+					}
+				});
+			}
+
+			function bathDelete() {
+				var rows = $dg.datagrid("getSelections");
+				if (rows.length == 0) {
+					$.messager.alert("系统提示", "至少选择一条数据！", 'info');
+					return;
+				}
+
+				$.messager.confirm('系统提示', '确定要删除这些数据吗?', function(r) {
+					if (r) {
+						var ids = [];
+						for (var i = 0; i < rows.length; i++) {
+							ids.push(rows[i].funCarouselId);
+						}
+						ajaxDel(ids);
+					}
+				});
+			}
+
+			function ajaxDel(ids) {
+				$.ajax({
+					url : '/ajax/bms/funCarousel/delete',
+					type : 'post',
+					data : {
+						ids : ids
+					},
+					success : function(data) {
+						if (data.result==true) {
+							$.messager.show({
+								title:'系统提示',
+								msg:'删除成功！',
+								timeout:1000,
+								showType:'slide'
+							});
+							$dg.datagrid('reload');
+						} else {
+							$.messager.alert("系统提示",data.message, 'info');
+						}
+					}
+				});
+			}
+		</script>
+</body>
+</html>

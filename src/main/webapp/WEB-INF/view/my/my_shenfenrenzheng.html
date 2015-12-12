@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>身份认证</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery.form.min.js"></script>
+<script type="text/javascript">
+var membersID = ${mbID};
+function common(){
+	var imgwidth = $(".s_c img").width();
+	var imgheight = (imgwidth/85.6)*54;
+	$(".s_c img").height(imgheight);
+	$(".s_d img").height(imgheight);
+	$(".ljfx").click(function(){
+		location="/accountsPage/myAccounts";
+	});
+};
+function uploadImage1(obj){
+	$('#form1').ajaxSubmit(function(data){
+		if(data.data.length!=0){
+			$(".s_c img").attr("src",data.data[0]);
+		}
+    });
+    return false;
+}
+function uploadImage2(obj){
+	$('#form2').ajaxSubmit(function(data){
+		if(data.data.length!=0){
+			$(".s_d img").attr("src",data.data[0]);
+		}
+    });
+    return false;
+}
+
+function submitInfo(obj){
+	if($.trim($("#idCardName").val())==null||$.trim($("#idCardName").val())==""){
+		alert("请输入真实姓名");
+		return;
+	}
+	if($.trim($("#idCardNum").val())==null||$.trim($("#idCardNum").val())==""){
+		alert("请输入身份证号");
+		return;
+	}
+	if($(".s_c img").attr("src")=="/images/icon_304_07.jpg"||$(".s_c img").attr("src")==""){
+		alert("请上传身份证照片(正面)");
+		return;
+	}
+	if($(".s_d img").attr("src")=="/images/icon_305_11.jpg"||$(".s_c img").attr("src")==""){
+		alert("请上传身份证照片(反面)");
+		return;
+	}
+	var idCardName = $("#idCardName").val();
+	var correctSideImage = $(".s_c img").attr("src");
+	var oppositeSideImage = $(".s_d img").attr("src");
+	var idCardNum = $("#idCardNum").val();
+	$(obj).attr("disabled",true);
+	$.ajax({
+		url:"/user/idCardAdd",
+		data:"params={membersID:"+membersID+",idCardName:'"+idCardName+"',correctSideImage:'"+correctSideImage+"',oppositeSideImage:'"+oppositeSideImage+"',idCardNum:'"+idCardNum+"'}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			$(obj).attr("disabled",false);
+			$(".win_a,.all_bg").show();
+			var wH = $(".win_a").height();
+			$(".win_a").css("margin-top",-wH/2);
+	    },
+	    error:function(){
+	    	
+ 	    }
+	});
+};
+
+</script>
+<style>
+.file{  
+	display:inline-block;
+	border-radius:50%;
+	width:100%;
+	height:100%;
+	cursor:pointer;  
+	background:none;
+	border:none;
+	opacity: 0;
+	z-index:2;
+	position: absolute;
+	top:0;
+	left:0;
+} 
+.file1{  
+	display:inline-block;
+	border-radius:50%;
+	width:100%;
+	height:100%;
+	cursor:pointer;  
+	background:none;
+	border:none;
+	opacity: 0;
+	z-index:2;
+	position: absolute;
+	top:0;
+	left:0;
+} 
+</style>
+</head>
+
+<body onload="common()">
+<div class="s_a">
+	<div class="s_b">
+		<h2><span>真实姓名</span><label><input type="text" id="idCardName"/></label></h2>
+		<h2 style="border-bottom:none;"><span>身份证号</span><label><input type="text" id="idCardNum"/></label></h2>
+	</div>
+</div>
+<form action="/uploadfile/card" id="form1"  enctype="multipart/form-data" method="post" >
+<div class="s_c" style="position: relative;"><a><img src="/images/icon_304_07.jpg" /><input class="file" type="file" name="file" onchange="uploadImage1(this)"/></a></div>
+</form> 
+<form action="/uploadfile/card" id="form2"  enctype="multipart/form-data" method="post" >
+<div class="s_d" style="position: relative;"><a><img src="/images/icon_305_11.jpg" /><input class="file1" type="file" name="file" onchange="uploadImage2(this)"/></a></div>
+</form> 
+<div class="s_e"><a onclick="submitInfo(this)" class="btn_tjsh">提交审核</a></div>
+<div class="s_f">请确保内容清晰可见，仅用于审核</div>
+
+<div class="all_bg"></div>
+<div class="win_a win_all">
+	<h2 style="text-align:left;padding:10%;text-align: center;">您的身份认证已经提交，请耐心等待审核<br />预计一个工作日收到结果</h2>
+	<h3><a class="ljfx">确定</a></h3>
+</div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none" />
+<title>打赏</title>
+<link href="/css/style_v2.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript" src="/js/toast.js"></script>
+<script type="text/javascript">
+</script>
+
+</head>
+<body style="overflow:hidden;">
+<div class="a_g_warp">
+<div class="a_g">
+	<h2><span><input id="zhuli_count" />元</span><strong>金额</strong></h2>
+	<h3><input type="text" placeholder="调侃一下" id="orderMemo"/></h3>
+	<div class="footer_b_i"><a id="toSubmit">打赏</a><a  style="display:none" id="afterSubmit"><img src="/images/04_27.png" />支付中，请等待</a></div>
+</div>
+<div class="footer_c">
+<span><img id="img1" src="" /></span>
+<strong><img  id="img2" src="" /></strong>
+</div>
+</div>
+<script type="text/javascript" src="/js/weixin/jweixin-1.0.0.js"></script>
+<script>
+(function(){
+	$("#img1").attr("src", "/images/icon_15.png").load(function() { 
+		var wH = $(window).height();
+		var aH = $(".footer_c").height();
+		$(".footer_c").css("top",wH-aH+"px");
+	}); 
+	$("#img2").attr("src", "/images/icon_16.png").load(function() { 
+		var wH = $(window).height();
+		var aH = $(".footer_c").height();
+		$(".footer_c").css("top",wH-aH+"px");
+	}); 
+})();
+wx.config({
+    debug: false,
+    appId: 'wxc4240168d70dab2f',
+    timestamp: ${timestamp},
+    nonceStr: '${nonceStr}',
+    signature: '${signature}',
+    jsApiList: [
+      'checkJsApi',
+      'onMenuShareTimeline',
+      'onMenuShareAppMessage',
+      'onMenuShareQQ',
+      'onMenuShareWeibo',
+      'hideMenuItems',
+      'showMenuItems',
+      'hideAllNonBaseMenuItem',
+      'showAllNonBaseMenuItem',
+      'translateVoice',
+      'startRecord',
+      'stopRecord',
+      'onRecordEnd',
+      'playVoice',
+      'pauseVoice',
+      'stopVoice',
+      'uploadVoice',
+      'downloadVoice',
+      'chooseImage',
+      'previewImage',
+      'uploadImage',
+      'downloadImage',
+      'getNetworkType',
+      'openLocation',
+      'getLocation',
+      'hideOptionMenu',
+      'showOptionMenu',
+      'closeWindow',
+      'scanQRCode',
+      'chooseWXPay',
+      'openProductSpecificView',
+      'addCard',
+      'chooseCard',
+      'openCard'
+    ]
+});
+
+wx.ready(function () {
+	  document.querySelector('#toSubmit').onclick = function () {
+		    var re = /^\d+(?=\.{0,1}\d+$|$)/ 
+	        if ($.trim($("#zhuli_count").val()) != "") { 
+	            if (!re.test($("#zhuli_count").val())) { 
+	                new Toast({context:$('body'),message:'请输入正确的数字'}).show();
+	                return;
+	            } 
+	            if (!($("#zhuli_count").val()*1)>0) { 
+	                new Toast({context:$('body'),message:'金额必须大于0'}).show();
+	                return;
+	            } 
+	        } 
+		    if($("#zhuli_count").val()==null||$.trim($("#zhuli_count").val())==""){
+		    	new Toast({context:$('body'),message:'请填写打赏金额'}).show();
+		    	return;
+		    }
+		    var globel = {
+					"crowdfundID":'${cfId}'*1,
+					"orderName":'${cfName}',
+					"orderPrice":$("#zhuli_count").val()*100,
+					"orderNum":$("#zhuli_count").val()*100,
+					"orderMemo":$.trim($("#orderMemo").val()),
+					"orderSource":'${cfType}',
+					"openId":'${openId}'
+			};
+		    var globelStr = JSON.stringify(globel);
+		  $.ajax({
+				url:"/helprecord/toWeiXinHelp",
+				data:"params="+globelStr,
+				type:"POST",
+				dataType:"json",
+				success: function(data){
+					$("#afterSubmit").show();
+					$("#toSubmit").hide();
+					var result = data.data;
+					if(data.result==true){
+						wx.chooseWXPay({
+						    timestamp: result.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+						    nonceStr: result.nonce_str, // 支付签名随机串，不长于 32 位
+						    package: result.prepayid, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+						    signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+						    paySign: result.sign, // 支付签名
+						    success: function (res) {
+						    	if('${cfType}'==0){
+						    		window.location.href="/helpPage/wishDetail/"+'${cfId}'*1;
+						    	}else{
+						    		window.location.href="/helpPage/tripDetail/"+'${cfId}'*1;
+						    	}
+						    },
+						    cancel:function(res){
+						    	$("#toSubmit").show();
+						    	$("#afterSubmit").hide();
+						    }
+						});
+					}else{
+						new Toast({context:$('body'),message:data.message}).show();
+					}
+			    },
+			    error:function(){
+			    	$("#toSubmit").show();
+			    	$("#afterSubmit").hide();
+			    }
+			});
+
+	  };
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="/plugin/easyui/easyui.css">
+<script type="text/javascript" src="/plugin/easyui/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="/plugin/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/plugin/jquery-form/jquery.form.js"></script>
+<script type="text/javascript" src="/plugin/jquery-validate/jquery.validate.js"></script>
+<title>玩赚世界-后台登陆</title>
+<style>
+* {
+	padding: 0px;
+	margin: 0px;
+}
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	background: url(/images/bms/bg.jpg);
+	font-size: 13px;
+}
+img {
+	border: 0;
+}
+.lg {
+	width: 622px;
+	height: 468px;
+	margin: 200px auto;
+}
+.lg_top {
+	height: 200px;
+	width: 468px;
+}
+.lg_main {
+	width: 600px;
+	height: 180px;
+	margin: 50px 60px;
+}
+.lg_m_1 {
+	width: 290px;
+	height: 80px;
+	float:left;
+}
+.ur {
+	height: 37px;
+	border: 0;
+	color: #666;
+	width: 236px;
+	margin: 4px 28px;
+	background: url(/images/bms/user.png) no-repeat;
+	padding-left: 10px;
+	font-size: 16pt;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.pw {
+	height: 37px;
+	border: 0;
+	color: #666;
+	width: 236px;
+	margin: 4px 28px;
+	background: url(/images/bms/password.png) no-repeat;
+	padding-left: 10px;
+	font-size: 16pt;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.bn {
+	width: 134px;
+	height: 61px;
+	background: url(/images/bms/btn_bg.png) no-repeat;
+	border: 0;
+	display: block;
+	font-size: 18px;
+	color: #FFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bolder;
+}
+.lg_login {
+	height: 80px;
+	width: 180px;
+	padding: 12px 40px;
+	float:left;
+}
+</style>
+</head>
+<body>
+<div class="lg">
+  <form id="f_login" method="post">
+    <div class="lg_top"></div>
+    <div class="lg_main">
+      <div class="lg_m_1">
+        <input id="userName" name="userName" placeholder="用户名" class="ur" />
+        <input id="password" name="password" type="password" placeholder="密码" class="pw" />        
+      </div>
+      <div class="lg_login"><input type="submit" value="登陆后台" class="bn" /></div>
+    </div>
+    
+  </form>
+</div>
+<script>
+
+			(function() {
+				f_login_init();
+				$(document).keyup(function(event){
+				  if(event.keyCode ==13){
+				    $("#submit").trigger("click");
+				  }
+				}); 
+			})();
+		function f_login_init() {
+				$("#f_login").validate({
+					rules : {//设置验证规则
+						"userName" : { //input标签定义的name属性值
+							required : true
+						},
+						"password" : { //input标签定义的name属性值
+							required : true
+						}
+					},
+					messages : {//设置错误信息
+						"userName" : {
+							required : "请输入用户名"
+						},
+						"password" : { 
+							required : "请输入密码"
+						}					
+					},
+					
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'left',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						f_login_submit(form);
+					}
+				});
+			}
+
+			function f_login_submit(form) {	
+				
+				$(form).find("input[type='submit']").attr("disabled","disabled").val("登陆中...");
+				$(form).ajaxSubmit({
+					url : '/ajax/bms/userlogin',
+					type : "post",
+					dataType : "json",
+					success : function(r) {
+						if (r.result) {
+						$(form).find("input[type='submit']")
+										.removeAttr("disabled").val("登陆后台");
+							window.location.href="/bms/"
+						} else {
+							$.messager.alert('系统提示', r.message, 'warn');
+							$('#userName').val('');
+							$('#password').val('');
+							$(form).find("input[type='submit']")
+										.removeAttr("disabled").val("登陆后台");
+						}
+					}
+				});
+			}
+  </script>
+</body>
+</html>

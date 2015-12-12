@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>查看身份信息</title>
+</head>
+
+<body>
+    <table align="center">
+	     <tr>
+	        <td align="right" >身份证号:</td>
+	        <td><input name="idCardNum" value="${ic.idCardNum}" readonly="readonly"/></td>
+	      </tr>
+          <tr>
+            <td align="right" >姓名:</td>
+            <td><input name="idCardName" value="${ic.idCardName}" /></td>
+          </tr>
+	      <tr>
+	        <td align="right" >身份证正面:</td>
+	        <td><img name="correctSideImage" src="${ic.correctSideImage}" width='750' height='500'></td>
+	      </tr>
+	      <tr>
+	        <td align="right">身份证反面:</td>
+	        <td><img name="correctSideImage" src="${ic.oppositeSideImage}" width='750' height='500'></td>  
+	      </tr>
+	      <tr>
+	        <td align="right" ></td>
+	        <td align="center"><div><button type="button" onclick="passaudit()">通过审核</button>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="unpassaudit()">审核失败</button></div></td>
+	      </tr>
+    </table>
+
+<div id="mydialog" style="display:none;padding:5px;width:400px;height:200px;" title="审核失败原因"> 
+<label><input type="radio" value="身份证信息错误" name="reason"/>身份证信息错误</label><br><label><input type="radio" value="图片不清晰" name="reason"/>图片不清晰</label> 
+</div> 
+<script type="text/javascript">
+var tempIdCard = ${ic.idCardId};
+//通过审核
+function passaudit(){
+	$.messager.confirm('确认审核','确认通过审核?',function(r){   
+	     if (r){   
+	    	 $.ajax({
+					url : '/idCard/review',
+					type : 'post',
+					data : {
+						idCardId :tempIdCard,
+						idCardRecordState :"审核通过",
+						reviewFlag:"1"
+					},
+					success : function(r) {
+						if (r.result) {
+							closeW(WEditId);
+							$dg.datagrid("reload");
+						} else {
+							$.messager.alert("系统提示", r.ms, 'info');
+						}
+					}
+				});
+	     }   
+    });  
+}
+//未通过审核
+function unpassaudit(){
+	$('#mydialog').show(); 
+	$('#mydialog').dialog({ 
+	buttons: [{ 
+		text: '提交', 
+		iconCls: 'icon-ok', 
+		handler: function() { 
+			if($('input:radio[name="reason"]:checked').val()==null){
+				alert("请选择原因");
+				return;
+			}
+			debugger;
+			$('#mydialog').window('close');
+			$.ajax({
+				url : '/idCard/review',
+				type : 'post',
+				data : {
+					idCardId :tempIdCard,
+					idCardRecordState :"审核失败    "+$('input:radio[name="reason"]:checked').val(),
+					reviewFlag:"0"
+				},
+				success : function(r) {
+					if (r.result) {
+						closeW(WEditId);
+						$dg.datagrid("reload");
+					} else {
+						$.messager.alert("系统提示", r.ms, 'info');
+					}
+				}
+			});
+			
+		} 
+	}, { 
+		text: '取消', 
+		iconCls: 'icon-cancel', 
+		handler: function() { 
+		$('#mydialog').window('close');
+		} 
+	}] 
+	}); 
+}
+</script>
+</body>
+</html>

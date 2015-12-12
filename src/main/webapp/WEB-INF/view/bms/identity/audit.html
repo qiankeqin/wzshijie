@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>已审核用户</title>
+<#include "bms/common/head_include.html">
+</head>
+
+<body>
+  <div class="easyui-panel" style="padding: 10px; background: #fafafa;">
+    <form id="f_search" method="get">
+            手机号:<input id="membersPhone" class="easyui-textbox" style="width:120px;"><a href="javascript: void(0);" onclick="f_search()" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+    </form>
+  </div>
+  <table id="dg"></table>
+  <script type="text/javascript">
+			var $dg = $('#dg');//表格 列表
+			var WAddId = "WAdd";//窗口id 添加
+			var WEditId = "WEdit";//窗口id 修改
+			$dg.datagrid({
+						url : '/idCardRecord/list',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : true
+						} ] ],
+						idField : 'id',//标识字段
+						columns : [ [
+								{
+									field : 'membersPhone',
+									title : '手机号',
+									width:300,
+									align:'center'
+								},
+								{
+									field : 'membersNickName',
+									title : '昵称',
+									width:300,
+									align:'center'
+								},
+								{
+									field : 'updateTime',
+									title : '申请时间',
+									width:300,
+									align:'center',
+									formatter:function(value,row,index){
+										return value;
+									}
+								},
+								{
+									field : 'idCardRecordState',
+									title : '状态',
+									width:500,
+									align:'center'
+								},
+								{
+									field : 'operate',
+									title : '操作',
+									width:300,
+									align:'center',
+									formatter : function(value, row, index) {
+										return '<a href="javascript:openShow('+row.idCardRecordId+')">查看</a>';
+									}
+								},
+								{
+									field : 'createTime',
+									title : '操作时间',
+									width:300,
+									align:'center',
+									formatter : function(value, row, index) {
+										return value;
+									}
+								} ] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+
+
+			function f_search() {
+				$dg.datagrid("load", {
+					membersPhone : $("#membersPhone").val()
+				});
+			}
+			/**
+			 * 弹出查看窗口
+			 */
+			function openShow(idCardRecordId) {
+				var wUrl = "/bms/idCard/showList?idCardRecordId=" + idCardRecordId;
+				openW(WEditId, "查看身份信息", wUrl, "900px");
+			}
+		</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台助理管理</title>
+</head>
+
+<body>
+  <table id="dgtr"></table>
+
+  <script type="text/javascript">
+           var crowdfundID=${id};
+			
+			var $dg = $('#dgtr');//表格 列表
+
+			$dg.datagrid({
+						url : '/ajax/bms/cf/TrackRecordlist',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						iconCls:'icon-edit',
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : false
+						} ] ],
+						queryParams: {
+							crowdfundID:crowdfundID
+						},
+						idField : 'trackRecordID',//标识字段
+						columns : [ [
+										{
+											field : 'trackRecordID',
+											title : 'trackRecordID',
+											width:100,
+											hidden:true
+										},
+										{
+											field : 'trackRecordTitle',
+											title : '图片描述',
+											width:400,
+											editor:{type:'text',options:{required:true}}
+										},{
+											field : 'trackRecordLocation',
+											title : '图片位置',
+											width:80,
+											editor:{type:'text',options:{required:true}}
+										},
+										{
+											field : 'trackRecordCreateTime',
+											title : '图片时间',
+											width:300,
+											editor:{type:'datebox',options:{required:true}}
+										},
+										{
+											field : 'operate',
+											title : '操作',
+											width : 120,
+											formatter : function(value, row, index) {
+												return '<a href="javascript:UpdateEditor('+ index+ ')" class="easyui-linkbutton edit_icon" iconCls="icon-edit" plain="true" >修改</a>'+
+												'<a href="javascript:SaveEditor('+ index+ ')" class="easyui-linkbutton save_icon" iconCls="icon-save" plain="true" style="display:none;">保存</a>'
+												       + '&nbsp;<a href="javascript:del('+ row.id+ ')" class="easyui-linkbutton" data-options="iconCls:\'icon-remove\'" plain="true">删除</a>';
+											}
+										}] ],
+										onAfterEdit : function(rowIndex, rowData, changes){
+											$.ajax({
+											  	url : '/ajax/bms/bd/produce/edit',
+											  	type : 'post',
+											  	data : {"trackRecordID":rowData.trackRecordID,"trackRecordTitle":rowData.trackRecordTitle,"trackRecordLocation":rowData.trackRecordLocation,"trackRecordCreateTime":rowData.trackRecordCreateTime},
+											  	success : function(r){
+											  		if (r.success) {
+														$.messager.alert('系统提示', "操作成功！", 'info');
+														$dg.datagrid('reload');
+													} else {
+														$.messager.alert('系统提示', r.ms, 'warn');
+													}
+											  	}
+											  });
+										},
+										onLoadSuccess : function() {
+											$dg.datagrid("clearSelections");
+										}
+					});
+			
+			
+			//修改
+			function UpdateEditor(rowIndex){
+				$("#WEdit").find(".edit_icon").eq(rowIndex).hide();
+				$("#WEdit").find(".save_icon").eq(rowIndex).show();
+				$dg.datagrid('beginEdit',rowIndex);
+			}
+			//保存修改
+			function SaveEditor(rowIndex){
+				$("#WEdit").find(".save_icon").eq(rowIndex).hide();
+				$("#WEdit").find(".edit_icon").eq(rowIndex).show();
+				$dg.datagrid('endEdit',rowIndex);
+			}
+		</script>
+</body>
+</html>

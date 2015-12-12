@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>角色添加</title>
+</head>
+
+<body>
+    <table style="width:90%">
+      <tr>
+        <td>角色名称 :</td>
+        <td><input name="roleName" style="width:300px;" id="lagoqu_rn"/><font color="red">*</font></td>
+      </tr>
+      <tr>
+        <td>菜单权限 :</td>
+        <td>
+	        <div id="lagoqu_tree1" style="border:1px solid #ccc;width:400px;">
+	        </div>
+        </td>
+      </tr>
+      <tr>
+        <td>描述 :</td>
+        <td><textarea name="description" rows="3" cols="55" id="lagoqu_dp"></textarea></td>
+      </tr>
+    </table>
+    <p style="margin-left:auto;margin-right:auto;width:200px;">
+      <input type="button" value="提交"  id="lagoqu_btn"/>
+    </p>
+
+
+  <script type="text/javascript">
+  	  (function(){
+  		$('#lagoqu_tree1').tree({    
+  		    url:'/ajax/bms/menu/add_edit_Tree',
+  		    method:'get',
+  		    animate:true,
+  		    checkbox:true,
+	  		cascadeCheck:true,
+	  		lines:false,
+	  		formatter:function(node){
+	  			return node.text;
+	  		}
+
+  		});  
+  	  })();
+	  $("#lagoqu_btn").click(function(){
+			if($("#lagoqu_rn").val()==""){
+				$.messager.alert("系统提示", "权限名称不能为空！", 'info');
+				return;
+			}
+			var rows1 = $('#lagoqu_tree1').tree('getChecked','indeterminate');
+			var rows = $('#lagoqu_tree1').tree('getChecked');
+			
+			for(var i=0;i<rows1.length;i++){
+				rows.push(rows1[i]);
+			}
+			if (rows.length == 0) {
+				$.messager.alert("系统提示", "至少选择一项菜单数据！", 'info');
+				return;
+			}
+			var menuIds = "";
+			var menuNames = "";
+			for (var i = 0; i < rows.length; i++) {
+				menuIds+=rows[i].id+",";
+				menuNames+=rows[i].text+",";
+			}
+		  $.ajax({
+				url : '/ajax/bms/role/add',
+				type : 'post',
+				data : {
+					roleName:$.trim($("#lagoqu_rn").val()),
+					description:$.trim($("#lagoqu_dp").val()),
+					menuName:menuNames.substring(0,menuNames.length-1),
+					menuID:menuIds.substring(0,menuIds.length-1)
+				},
+				success : function(r) {
+						$.messager.alert('系统提示', "添加成功！", 'info');
+						closeW(WAddId);
+						$dg.datagrid('reload');
+				},
+			    error:function(){
+			    	$.messager.alert('系统提示', "error！", 'info');
+		 	    }
+			});
+	  });
+	</script>
+</body>
+</html>

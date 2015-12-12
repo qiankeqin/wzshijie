@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title></title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/js/easemob/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="/js/slidernav.js"></script>
+
+<script type="text/javascript" src="/js/easemob/strophe-custom-2.0.1.js"></script>
+<script type="text/javascript" src="/js/easemob/json2.js"></script>
+<script type="text/javascript" src="/js/easemob/easemob.im-1.0.7.js"></script>
+<script type="text/javascript" src="/js/easemob/bootstrap.js"></script>
+<style>
+.sj_a h4 span {
+  padding: 1%;
+  background-color: #fafafa;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	var sH = $(".sj_h span").outerHeight();
+	$(".sj_h strong").outerHeight(sH);
+	$(".sj_h strong a").css("line-height",sH+"px");
+});
+
+var num = 60;
+var start = num;
+var step = -1;
+var inTimeEnd;
+var text = "秒重新获取验证码";
+var issend = false;
+
+//登录
+function login(){
+	var pNum = $("#pNum").val();
+	var code = $("#code").val();
+	var membersWxID="${WxID}";
+	var membersImage="${image}";
+	var membersNickName="${name}";
+	var cfId="${cfId}";
+	var membersSex=${sex};
+	if (!isMobil(pNum)) {
+		alert("请输入正确的手机号");
+        return;
+    }
+	if(code==null || code==""){
+		alert("请输入正确的验证码");
+        return;
+	}
+	$("#sureSubmit1").hide();
+	$("#sureSubmit2").show();
+	 $.ajax({
+		url : "/user/bindingkik",
+		type : "post",
+		data :"params={pNum:"+pNum+",code:"+code+",membersWxID:'"+membersWxID+"',membersImage:'"+membersImage+"',membersNickName:'"+membersNickName+"',membersSex:"+membersSex+"}",
+		success : function(r) {
+			if(r.result==false){
+				alert(r.message);
+				$("#sureSubmit2").hide();
+				$("#sureSubmit1").show();
+			}else{
+				if(cfId=='fabu'){
+					location="/helpPage";
+				}else if(cfId=='account'){
+					location="/accountsPage/myAccounts";
+				}else if(cfId.substring(0,2)=="v2"){
+					var arr = cfId.split("-");
+					location="/helpPage/toGive/"+arr[1]+"?membersWxID="+membersWxID;
+				}else{
+					location="/helpPage/crowdfundDetailWx/"+cfId*1+"?membersWxID="+membersWxID;
+				}
+			}
+		},
+		error : function(){
+			alert("系统异常");
+			$("#sureSubmit2").hide();
+			$("#sureSubmit1").show();
+		}
+	});
+}
+
+//获取验证码
+function getcode(){
+	if(issend == true){
+		return;
+	}
+	start=num;
+	var pNum = $("#pNum").val().trim();
+	if (!isMobil(pNum)) {
+		alert("请输入正确的手机号");
+        return;
+    }
+	$.ajax({
+		url : "/user/getcode",
+		type : "post",
+		data :"params={pNum:"+pNum+"}",
+		success : function(r) {
+			if(r.result==false){
+				alert(r.message);
+			}else{
+				issend = true;
+				countdown()
+			}
+		},
+		error : function(){
+			
+		}
+	});		
+}
+//获取验证码(语音播放)
+function getcodeVoice(){
+	if(issend == true){
+		return;
+	}
+	var pNum = $("#pNum").val().trim();
+	if (!isMobil(pNum)) {
+		alert("请输入正确的手机号");
+        return;
+    }
+	$.ajax({
+		url : "/user/getcodeVoice",
+		type : "post",
+		data :"params={pNum:"+pNum+"}",
+		success : function(r) {
+			if(r.result==false){
+				alert(r.message);
+			}else{
+				issend = true;
+				countdown()
+			}
+		},
+		error : function(){
+			
+		}
+	});		
+}
+
+function countdown() {
+    inTimeEnd = setInterval("count()", 1000);
+}
+
+
+function count() {
+    $("#getcode").html(start + text);
+    start += step;
+    if(start<30){
+    	$("#others_check").show();
+    }
+    if (start < 0) {
+    	issend = false;
+        window.clearInterval(inTimeEnd);
+        var str = "";
+        if (start == -1) {
+            str = "重新获取验证码";
+        } else {
+            str = "获取验证码";
+        }
+        $("#getcode").html(str);
+        start = num;
+    }
+}
+
+//验证手机号
+function isMobil(s) {
+    return s.match(/^[1][3,4,5,8,7][0-9]{9}$/);
+}
+</script>
+</head>
+
+<body style="background-color:#fff;">
+<div class="sj_a">
+	<h2 style="padding-top:1%;"><img src="/images/icon_94_03.png" /></h2>
+	<h4><span><img src="/images/icon_92_12.png" style="margin-left: 2%;"/><input type="text" id="pNum" placeholder="输入您的手机号"/></span></h4>
+	<h4 class="sj_h"><span class="left"  style="padding:2% 3%;"><img src="/images/icon_93_12.png" /><input type="text" id="code"  placeholder="输入验证码"/></span><strong><a  id="getcode" onclick="getcode();">获取验证码</a></strong><div class="clear"></div></h4>
+	<h6 style="color: #ccc;display:none" id="others_check">收不到验证码？<a  id="getcodeVoice" onclick="getcodeVoice();" style="color:#09F;">获取验证码</a></h6>
+	<h5 style="margin-top: 10%;"><a onclick="login();" id="sureSubmit1">确认提交</a><a  id="sureSubmit2" style="background-color:#c9c9c9;display: none">正在提交中<img src="/images/submit_loading.gif" style="vertical-align: middle;width: 10%;"/></a></h5>
+</div>
+</body>
+</html>

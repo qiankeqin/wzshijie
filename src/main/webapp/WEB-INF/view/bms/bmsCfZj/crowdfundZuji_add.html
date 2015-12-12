@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台足迹管理</title>
+</head>
+
+<body>
+
+  <form id="f_add" method="post">
+    <table>
+    <input type="hidden" name="crowdfundID" id="crowdfundID" value="${id}"/>
+      <tr>
+	       <td align="right">图片<font color="red">*</font>:</td>
+	       <td><input type="file" name="file_upload" id="file_upload" /><font color="red" style="margin-left:10px;"></font></td>
+	   </tr>
+	   <tr>
+  	       <td></td>
+           <td id="show_upload" style="position: relative;"></td>
+       </tr>
+      <tr>
+        <td align="right">图片描述<font color="red">*</font>:</td>
+        <td><textarea name="trackRecordTitle" id="trackRecordTitle"  rows="4" cols="50"></textarea></td>
+      </tr>
+       <tr>
+          <td align="right">图片位置<font color="red">*</font>:</td>
+          <td><input id="trackRecordLocation" name="trackRecordLocation" style="width:500px;"></td>
+      </tr>
+      <tr>
+          <td align="right">图片日期<font color="red">*</font></td>
+          <td><input id="trackRecordCreateTime" name="trackRecordCreateTime" class="easyui-datetimebox" data-options="required:true,showSeconds:true" style="width:180px;"></td>
+      </tr>
+    </table>
+
+    <p style="width:150px;margin-left:auto;margin-right:auto;">
+      <input type="submit" value="  提 交  " />&nbsp;&nbsp;<input type="reset"
+        value=" 重 置  " />
+    </p>
+  </form>
+  <script type="text/javascript">
+			(function() {
+				Crowdfund_upload();
+				f_edit_init();
+			})();
+
+			
+			
+			function Crowdfund_upload(){
+				$("#file_upload").uploadify(
+						{
+							//上传使用的 Flash
+							'swf' : '/plugin/uploadify/uploadify.swf',
+							//后台处理程序的相对路径。
+							'uploader' : '/ajax/bms/cf/upload',
+							'method' : 'get',
+							//是否自动上传
+							'auto' : true,
+							// 按钮的宽度
+							'width' : 60,
+							// 按钮的高度
+							'height' : 23,
+							// 按钮上的文字
+							'buttonText' : "上传",
+							// 按钮的鼠标图标
+							'buttonCursor' : 'hand',
+							// 上传参数名称
+							'fileObjName' : 'Filedata',
+							// 两个配套使用
+							// 扩展名
+							'fileTypeExts' : "*.jpg;*.png;*.jpeg",
+							// 文件说明
+							'fileTypeDesc' : "请选择 jpg png 文件",
+							//限制上传文件的大小
+							'fileSizeLimit' : '4000KB',
+							'progressData' : 'speed',
+							//上传前
+							 'onUploadStart' : function(file) {
+					           var i = $("#show_upload").find("label").length; 
+					           if(i>1){
+					        	   alert("只能上传1张");
+					        	   $('#file_upload').uploadify('cancel');
+					           }
+					         },
+				           'onInit':function(){
+								$("#file_upload").css({"display":"inline-block"});
+								$("#file_upload-queue").css({"display":"inline-block"});
+							},
+							 //上传成功
+							'onUploadSuccess':function(file, data, response) {
+							    	var obj = JSON.parse(data);
+							    	var trackRecordImage=obj.data;
+								    $("#show_upload").append("<span style='display: inline-block;width: 150px;'><a style='position:absolute;height:16px;width:16px;'  onclick='delImg(this)' class='panel-tool-close'></a><label><input type='hidden' name='trackRecordImage' id='trackRecordImage' value="+trackRecordImage+"><img src='"+trackRecordImage+"' width='148' height='198' /></label></span>");
+							     }
+				         } 
+						);
+			}
+			
+			
+			function f_edit_init() {
+				$("#f_add").validate({
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'right',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						f_add_submit(form);
+					}
+				});
+			}
+
+			function f_add_submit(form) {
+				$(form).ajaxSubmit({
+					url:"/ajax/bms/crowdfund/saveZuji",
+					type:"put",
+					success: function(data){
+						if(data.result==true){
+							$.messager.alert('系统提示', "发布足迹成功！", 'info');
+							closeW(WAddId);
+							$('#dg').datagrid('reload');
+						}else{
+							alert("发布失败");
+						}
+						
+				    },
+				    error:function(){
+				    	
+			 	    }
+				}); 
+				
+			}
+		</script>
+</body>
+</html>

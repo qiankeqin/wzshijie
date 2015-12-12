@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台助理管理</title>
+</head>
+
+<body>
+
+  <form id="f_edit" method="post">
+    <input name="crowdfundID" id="crowdfundID" type="hidden" value="${crowdfund.crowdfundID}">
+    <input name="crowdfundTitle" id="crowdfundTitle" type="hidden" value="">
+    <input name="crowdfundRepay" id="crowdfundRepay" type="hidden" value="">
+    <table>
+      <tr>
+        <td align="right">排序:</td>
+        <td><input name="crowdfundSort" id="crowdfundSort" value="${crowdfund.crowdfundSort}" class="easyui-numberspinner" style="width:180px;" required="required"/></td>
+      </tr>
+      <tr>
+        <td align="right">详情:</td>
+        <td><textarea id="crowdfundDesc" name="crowdfundDesc" rows="3" cols="70">${crowdfund.crowdfundDesc}</textarea></td>
+      </tr>
+      <tr>
+        <td align="right">图片:</td>
+        <td style="position: relative;">
+ 	      	<#list "${crowdfund.crowdfundPic }"?split(",") as image>
+ 	      	<span>
+ 	      	<a style="height:16px;width:16px;" class="panel-tool-close"></a>
+	       	<label><img src='${image}' width='148' height='198' /></label>
+	       	</span>
+	         </#list> 
+ 	      	</td>
+      </tr>
+    </table>
+
+    <p style="width:150px;margin-left:auto;margin-right:auto;">
+      <input type="submit" value="  提 交  " />&nbsp;&nbsp;<input type="reset"
+        value=" 重 置  " />
+    </p>
+  </form>
+  <table id="dgzl"></table>
+
+  <script type="text/javascript">
+  var crowdfundID=${crowdfund.crowdfundID};
+			(function() {
+				f_edit_init();
+			})();
+
+			function f_edit_init() {
+				$("#f_edit").validate({
+					rules : {//设置验证规则
+						"crowdfundDesc" : { //input标签定义的name属性值
+							required : true
+						}
+					},
+					messages : {//设置错误信息
+						"crowdfundDesc" : { //input标签定义的name属性值
+							required : "详情不能为空"
+						}
+					},
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'right',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						f_add_submit(form);
+					}
+				});
+			}
+
+			function f_add_submit(form) {
+				$(form).ajaxSubmit({
+					url : '/ajax/bms/crowdfund/updateCrowdfund',
+					type : "put",
+					success : function(r) {
+						if (r.result) {
+							$.messager.alert('系统提示', "修改成功！", 'info');
+							closeW(WEditId);
+							$('#dg').datagrid('reload');
+						} else {
+							$.messager.alert('系统提示', r.ms, 'warn');
+						}
+					}
+				});
+			}
+			
+			
+			
+			var $dg = $('#dgzl');//表格 列表
+
+			$dg.datagrid({
+						url : '/ajax/bms/crowdfundMark/list',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : false
+						} ] ],
+						queryParams: {
+							crowdfundID:crowdfundID
+						},
+						idField : 'crowdfundID',//标识字段
+						columns : [ [
+										{
+											field : 'crowdfundmarkID',
+											title : 'id',
+											width:100,
+											hidden:true
+										},
+										{
+											field : 'membersNickName',
+											title : '助力人姓名',
+											width:100,
+										},{
+											field : 'crowdfundmarkAccount',
+											title : '助力金额',
+											width:80,
+											formatter : function(value, row, index) {
+												return formatFloat(row.crowdfundmarkAccount);
+											}
+										},
+										{
+											field : 'crowdfundmarkMessage',
+											title : '助力留言',
+											width:300
+										},
+										{
+											field : 'createTime',
+											title : '助力时间',
+											width:150
+										}] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+		</script>
+</body>
+</html>

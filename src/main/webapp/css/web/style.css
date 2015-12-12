@@ -1,0 +1,55 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*通用样式*/
+html, body, div, span,applet, object, iframe, h1, h2, h3,      
+h4, h5, h6, p,blockquote, pre, a, abbr, acronym,      
+address, big, cite, code,del, dfn, em, font, img, ins,      
+kbd, q, s, samp, small,strike, strong, sub, sup, tt,      
+var, dl, dt, dd, ol, ul,li, fieldset, form, label, legend,      
+table, caption, tbody,tfoot, thead, tr, th, td {      
+margin: 0;padding: 0;border: 0;outline: 0;font-weight:inherit;font-style: inherit;font-size: 100%;font-family:inherit;vertical-align:baselinebaseline;}      
+:focus { outline:0;}      
+a, a:link, a:visited,a:hover, a:active{text-decoration:none;color:#333;}
+table { border-collapse:separate;border-spacing: 0;}      
+th, td {text-align: left;font-weight: normal;}      
+img, iframe {border:none; text-decoration:none;}      
+ol, ul {list-style:none;}      
+input, textarea, select,button {font-size: 100%;font-family: inherit;vertical-align:middle;}      
+select {/*margin:inherit;*/}      
+hr {margin: 0;padding:0;border: 0;color: #000;background-color: #000;height: 1px}
+.h5 {height:5px;}
+.h10 {height:10px;}
+.h15 {height:15px;}
+.h20 {height:20px;}
+.font14 {font-size:14px;}
+.font16 {font-size:16px;}
+body{font-size:12px;font-family: "微软雅黑", Arial;color:#666;background-color:#f7f7f7;}
+.left {float:left;}
+.right {float:right;}
+.clear {clear:both;}
+.all_bg {position:fixed;top:0;left:0;width:200%;height:200%;z-index:1000;_position:absolute;width:200%;background:url(../images/web/all_bg.png);_background:none;display:none;z-index:1000;}
+.w1000 {width:1000px;margin:auto;}
+.bd_1 {border:1p# #ddd solid;}
+.bd_2 {border:1p# #ddd solid;}
+.bd_3 {border:1p# #ddd solid;}
+.bg_1 {background-color:#f1f1f1;}
+.bg_2 {background-color:#f1f1f1;}
+.bg_3 {background-color:#f1f1f1;}
+.shadow_1 {box-shadow:0 1px 3px 0 rgba(187, 187, 187, 0.6);}
+.shadow_2 {box-shadow:0px 2px 5px 0px rgba(187,187,187,0.6);}
+.a_1 {color:#333;}
+.a_1:hover {color:#666;}
+.a_2 {color:#333;}
+.a_2:hover {color:#666;}
+.a_3 {color:#333;}
+.a_3:hover {color:#666;}
+.none {display:none;}
+.mauto {margin:auto;}
+
+/*overflow:hidden;text-overflow:ellipsis;white-space:nowrap;filter:alpha(opacity=0);transition: all 0.3s ease 0s;transform: rotate(0deg) scale(1.05);opacity:0.6;filter:alpha(opacity=60);*/
+/*hover(3fa2d0->5fc0ed)*/
+
+.back_top {position:fixed;bottom:30px;left:50%;margin-left:520px;}
+.back_top a {display:block;width:40px;height:40px;background:url(../images/web/icon_12_32.png);}
+.back_top a:hover {background:url(../images/web/icon_12_32.png) no-repeat right bottom;}

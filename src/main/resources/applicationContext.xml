@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 启动注解 -->
+	<context:annotation-config />
+	<!-- 使用注解控制器： 定义注解扫描范围 -->
+	<context:component-scan base-package="com.lagoqu.worldplay.service" />
+	<!-- 使用注解控制器： 定义注解扫描范围 -->
+	<context:component-scan base-package="com.lagoqu.worldplay.bms.service" />
+
+
+
+	<!-- <bean id="placeholderConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:config.properties</value>
+		</property>
+	</bean>
+
+	<bean id="nativeJdbcExtractor"
+		class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor">
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxActive">
+			<value>100</value>
+		</property>
+	</bean> -->
+
+
+	<!-- <bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="packagesToScan" value="com.lagouqu.entity" />
+		<property name="configLocations">
+			<list>
+				<value>classpath:hibernate.cfg.xml</value>
+			</list>
+		</property>
+	</bean> -->
+
+	<!-- <bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" /> -->
+ <!-- 要调用的工作类 -->
+<!--         <bean id="quartzJob" class="com.lagouqu.timer.OrderTimer"></bean> -->
+<!--         定义调用对象和调用对象的方法 -->
+<!--         <bean id="jobtask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> -->
+<!--             调用的类 -->
+<!--             <property name="targetObject"> -->
+<!--                 <ref bean="quartzJob"/> -->
+<!--             </property> -->
+<!--             调用类中的方法 -->
+<!--             <property name="targetMethod"> -->
+<!--                 <value>handleTimer</value> -->
+<!--             </property> -->
+<!--         </bean> -->
+<!--         定义触发时间 -->
+<!--         <bean id="doTime" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> -->
+<!--             <property name="jobDetail"> -->
+<!--                 <ref bean="jobtask"/> -->
+<!--             </property> -->
+<!--             cron表达式 -->
+<!--             <property name="cronExpression"> -->
+<!--                 <value>0 0 1 ? * *</value> -->
+<!--             </property> -->
+<!--         </bean> -->
+<!--         总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
+<!--         <bean id="startQuertz"  autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> -->
+<!--             <property name="triggers"> -->
+<!--                 <list> -->
+<!--                     <ref bean="doTime"/> -->
+<!--                 </list> -->
+<!--             </property> -->
+<!--         </bean> -->
+</beans>

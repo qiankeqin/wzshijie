@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>我的</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript">
+var membersID = ${crrrentMember.membersID};
+function zc_index(){
+	$.ajax({
+		url:"/helprecord/myjoin",
+		data:"params={memberID:"+membersID+",page:"+1+",size:"+10000+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			var _html = '';
+			if(data.data.totalCount!=0){
+				var arrs = data.data.list;
+				for(var i=0;i<arrs.length;i++){
+					_html+='<li>';
+					_html+='<div class="index_li_inner">';
+					_html+='<h2>';
+					_html+='<span><a href="javascript:void(0);"><img src="'+arrs[i].membersImage+'" style="height:100%;"/></a></span>';
+					_html+='<strong><em><a href="javascript:void(0);">'+arrs[i].membersNickName+'</a></em><font>'+getDateDiff(arrs[i].createTime)+'</font></strong>';
+					_html+='<div class="clear"></div>';
+					_html+='</h2>';
+					_html+='<div class="index_li_div">';
+					_html+='<div class="index_li_div_a">';
+					_html+='<h3><a href="/helpPage/crowdfundDetail/'+arrs[i].crowdfundID+'" ><img src="'+arrs[i].crowdfundPath+'" /></a></h3>';
+					_html+='<h4><em><img src="/images/icon_hot_07.png" /><font>'+((arrs[i].crowdfundaccTimes)*1+(arrs[i].crowdfundTimes)*1)+'</font></em><strong><a href="javascript:void(0);"><img src="/images/icon_add_07.png" />'+arrs[i].crowdfundTitle+'</a></strong><div class="clear"></div></h4>';
+					_html+='</div>';
+					_html+='<div class="index_li_div_b"></div>';
+					_html+='<div class="index_li_div_c"></div>';
+					_html+='</div>';
+					_html+='</div>';
+					_html+='</li>';
+				}
+			}
+			$("#crowdfundList").html(_html);
+			
+			var fH = $(".footer_tianjia").height();
+			var fH2 = $("#footer").outerHeight();
+			$("#footer li:not(:eq(2))").height(fH);
+			$(".footer_zw").height(fH2);
+			$(".index_li_div").each(function(){
+				var dAh = $(this).find(".index_li_div_a").outerHeight();
+				$(this).find(".index_li_div_b,.index_li_div_c").height(dAh);
+				var dBw = $(this).find(".index_li_div_b").width();
+				$(this).find(".index_li_div_b").css("margin-left",-dBw/2);
+				var dCw = $(this).find(".index_li_div_c").width();
+				$(this).find(".index_li_div_c").css("margin-left",-dCw/2);
+			});
+			$(".index_li_inner h2 span").height($(".index_li_inner h2 span").width());
+			
+	    }
+	});
+	
+	
+};
+</script>
+</head>
+<body onload="zc_index()">
+<div class="index_ul">
+	<ul id="crowdfundList">
+	</ul>
+</div>
+<div class="footer_zw"></div>
+<div id="footer"><#include "common/footer.html"></div>
+<script type="text/javascript" src="/js/common/footer.js"></script>
+</body>
+</html>

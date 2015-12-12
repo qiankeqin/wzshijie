@@ -1,0 +1,442 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title></title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/css/photoswipe.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" href="/css/idangerous.swiper.css"/>
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript" src="/js/slidernav.js"></script>
+<script type="text/javascript" src="/js/simple-inheritance.min.js"></script>
+<script type="text/javascript" src="/js/code-photoswipe-1.0.19.min.js"></script>
+<script src="/js/idangerous.swiper.js"></script>
+<style type="text/css">
+
+.zhuli_jine h3 {
+  background-color: initial;
+}
+.di_a dd {
+  font-size: 4vw;
+  word-break: break-all;
+}
+.di_a h4 strong {
+  font-size: 4vw;
+}
+.di_a dt {
+  word-break: break-all;
+}
+#nickName{
+  font-size: 4vw;
+  color:#505050;
+}
+#whenever{
+font-size: 3vw;
+color:#b7b7b7;
+}
+#detail_endTime{
+font-size: 3vw;
+color:#b7b7b7;
+}
+#detail_small{
+font-size: 3vw;
+color:#b7b7b7;
+}
+#crowdfundTitle{
+color:#000000;
+}
+#crowdfundDesc{
+color:#999999;
+}
+#crowdfundRepay{
+color:#4f4f4f;
+}
+</style>
+<script type="text/javascript">
+var totalPage = 0;
+var crowdfundID = '${cfId}';
+var urls = [];
+var descHtml = "";
+function common(){
+	$.ajax({
+		url:"/help/crowdfundDetail",
+		data:"params={crowdfundID:"+crowdfundID*1+",page:"+1+",size:"+10+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			$("#nickName").html(data.data.crowdfundInfo[0].membersNickName);
+			$("#memberPhoto").attr("src",data.data.crowdfundInfo[0].membersImage);
+			$("#whenever").html(getDateDiff(data.data.crowdfundInfo[0].createTime));
+			$("#crowdfundAccount").html(formatFloat(data.data.crowdfundInfo[0].crowdfundAccount));
+			$("#crowdfundCount").html((data.data.crowdfundInfo[0].crowdfundTimes)*1);
+			$("#crowdfundTitle").html(data.data.crowdfundInfo[0].crowdfundTitle);
+			$("#crowdfundDesc").html(data.data.crowdfundInfo[0].crowdfundDesc);
+			var c1=data.data.crowdfundInfo[0].crowdfundRepay;
+			c1=c1.replace(/\s/g,"<br/>");
+			$("#crowdfundRepay").html(c1);
+			$("#detail_endTime").html("到"+formatTimeStamp("yyyy年MM月dd日",data.data.crowdfundInfo[0].endTime)+"截止");
+			$("#remainingDays").html(getDate(data.data.crowdfundInfo[0].endTime));
+			$("#crowdfundPath").html(data.data.crowdfundInfo[0].crowdfundPath);
+			$("#detail_small").append(data.data.crowdfundInfo[0].crowdfundaccTimes+data.data.crowdfundInfo[0].crowdfundTimes);
+			descHtml = data.data.crowdfundInfo[0].crowdfundDesc;
+			if(descHtml==""||descHtml==null){
+				descHtml = "要钱都不多写一个字，这家伙懒成这样，是我我就用钱砸他了！"
+			}
+			//四张图片
+			if(data.data.crowdfundInfo[0].crowdfundPic != null){
+				var result= data.data.crowdfundInfo[0].crowdfundPic.split(',');
+				var _html = "";
+				for(var i=0;i<result.length;i++){
+					_html+='<div class="swiper-slide">';
+					_html+='<div class="content-slide"></div>';
+					_html+='<a class="fxb_img"><img src="'+result[i]+'"/></a>';
+					_html+='</div>';
+					urls.push($.trim(result[i]));
+				}
+				$(".swiper-wrapper").html(_html);
+			}
+			//多少人关注过
+			var _html_1 = "";
+			if(data.data.attentionInfo.length>0){
+				$("#attitionCount").html(data.data.attentionInfo.length);
+				for(var j=0;j<data.data.attentionInfo.length;j++){
+					_html_1+='<a href="javascript:void(0);" id="'+data.data.attentionInfo[j].membersID+'"><img src="'+data.data.attentionInfo[j].membersImage+'" style="height:100%;"/></a>';
+				}
+			}else{
+				$("#attitionCount").html("0");
+			}
+			$("#attitionList").html(_html_1);
+			//参加助理的列表
+			var _html_2 = "";
+			
+			if(data.data.crowdfundMarkInfo.list.length>0){
+				var _result_2 = data.data.crowdfundMarkInfo.list;
+				totalPage = data.data.crowdfundMarkInfo.pageCount;
+				$("#zhulicount").html(data.data.crowdfundMarkInfo.totalCount);
+				for(var k=0;k<_result_2.length;k++){
+					_html_2 +='<div class="details_inner_zl">';
+					_html_2 +='<span><a href="javascript:void(0);"><img src="'+_result_2[k].membersImage+'" style="height:100%"/></a></span>';
+					_html_2 +='<strong><em><b>'+getDateDiff(_result_2[k].createTime)+'</b><a href="javascript:void(0);">'+_result_2[k].membersNickName+'</a></em><font>打赏了<i>'+formatFloat(_result_2[k].crowdfundmarkAccount)+'</i>元</font></strong>';
+					_html_2 +='<div class="clear"></div>';
+					if(_result_2[k].crowdfundmarkMessage!=null&&_result_2[k].crowdfundmarkMessage!=""){
+						_html_2 +='<h4><s  style="top:-9%;"><img src="/images/details_icon_f_22.png" /></s><p>'+_result_2[k].crowdfundmarkMessage+'</p></h4>';
+					}else{
+						_html_2 +='<h4><s  style="top:-9%;"><img src="/images/details_icon_f_22.png" /></s><p>猪力君默默的祝福你~</p></h4>';
+					}
+					if(_result_2[k].replyList.length>0){
+						_html_2 +='<h5>';
+							_html_2 +='<div class="d_bl">';
+							_html_2 +='<ul>';
+						for(var p = 0;p<_result_2[k].replyList.length;p++){
+							_html_2 +='<li>';
+							_html_2 +='<dl>';
+							_html_2 +='<dt><a><i>'+_result_2[k].replyList[p].membersNickName+'</i></a>:'+_result_2[k].replyList[p].crowdfundReply+'</dt>';
+							_html_2 +='<dd>'+formatTimeSecond(_result_2[k].replyList[p].createTime)+'</dd>';
+							_html_2 +='</dl>';
+							_html_2 +='</li>';
+						}
+					_html_2 +='</ul>'
+					_html_2 +='</div>'
+					_html_2 +='</h5>'
+					}
+					_html_2 +='</div>';
+				}
+				$(".di_b").append(_html_2);
+			}else{
+				$("#zhulicount").html(0);
+			}
+			if(data.data.flag == false){
+				$("#detail_endTime").html("已过期");
+				$("#ds_span").css("background-color","#b7b7b7");
+				$(".js_btn_zltj").attr("disabled","disabled");
+			}
+			$('#slider').sliderNav();
+			
+			var wH = $(window).height();
+			
+			
+			var zHb = $(".zhulidetails_btn_suer").outerHeight();
+			$(".zhulidetails_btn_suer_zw").height(zHb);
+			
+// 			var zlH = $(".zhuli_jine").outerHeight();
+// 			$(".zhuli_jine").css("bottom",-zlH);
+			
+			$(".js_btn_zltj").click(function(){
+				location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc4240168d70dab2f&redirect_uri=http%3a%2f%2fwww.wzshijie.com%2ftoSkip&response_type=code&scope=snsapi_userinfo&state="+crowdfundID+"#wechat_redirect";
+			});
+			$(".zhuli_jine h5 img").click(function(){
+				$(".all_bg").hide();
+// 				$(".zhuli_jine").animate({bottom:-zlH},100);
+			});
+			$(".all_bg").click(function(){
+				$(".all_bg").hide();
+// 				$(".zhuli_jine").animate({bottom:-zlH},100);
+				$(".win_a").hide();
+				$(".share_a").hide();
+			});
+			
+			$(".all_bg").show();
+//				$(".zhuli_jine").animate({bottom:-zlH},100);
+			$(".share_a").show();
+			var wH = $(".share_a").height();
+			$(".share_a").css("margin-top",-wH/2);
+			
+// 			$(".js_tjzl").click(function(){
+// 				$(".all_bg").show();
+// // 				$(".zhuli_jine").animate({bottom:-zlH},100);
+// 				$(".win_a").show();
+// 				var wH = $(".win_a").height();
+// 				$(".win_a").css("margin-top",-wH/2);
+// 			});
+			
+			$(".ljfx").click(function(){
+				$(".all_bg").hide();
+				$(".share_a").hide();
+				$(".fx_a").show();
+			});
+			$(".fhjx").click(function(){
+				$(".all_bg").hide();
+				$(".win_a").hide();
+			});
+			$(".fhck").click(function(){
+				$(".all_bg").hide();
+				$(".share_a").hide();
+			});
+			
+			var mySwiper = new Swiper('.swiper-container',{
+				pagination: '.pagination',
+				loop:true,  <!--允许循环，截止到最后一个时在循环到第一个目标继续执行-->
+				grabCursor: true,
+				autoplay:2000,		<!--根据时间自动切换-->
+				paginationClickable: true <!--允许点击切换图片的按钮-->
+			 })
+		},
+	    error:function(){
+	    	
+	    }
+	});
+	
+};
+var page=1;
+$(window).scroll(function(){
+	　　var scrollTop = $(this).scrollTop();
+	　　var scrollHeight = $(document).height();
+	　　var windowHeight = $(this).height();
+	　　if(scrollTop + windowHeight == scrollHeight){
+		page=page+1;
+		if(page>totalPage){
+			return;
+		}
+	     $("#loading").show();
+		 zc_index();
+	　　}
+	});
+
+function zc_index(){
+	$.ajax({
+		url:"/help/crowdfundListByPage",
+		data:"params={page:"+page+",size:"+10+",crowdfundID:"+crowdfundID*1+"}",
+		type:"POST",
+		dataType:"json",
+		beforeSend:function(){
+		},
+		success: function(data){
+			$("#loading").hide();
+			var _html_2 = "";
+			if(data.data.list.length>0){
+				var _result_2 = data.data.list;
+				for(var k=0;k<_result_2.length;k++){
+					_html_2 +='<div class="details_inner_zl">';
+					_html_2 +='<span><a href="javascript:void(0);"><img src="'+_result_2[k].membersImage+'" style="height:100%"/></a></span>';
+					_html_2 +='<strong><em><b>'+getDateDiff(_result_2[k].createTime)+'</b><a href="javascript:void(0);">'+_result_2[k].membersNickName+'</a></em><font>打赏了<i>'+formatFloat(_result_2[k].crowdfundmarkAccount)+'</i>元</font></strong>';
+					_html_2 +='<div class="clear"></div>';
+					if(_result_2[k].crowdfundmarkMessage!=null&&_result_2[k].crowdfundmarkMessage!=""){
+						_html_2 +='<h4><s  style="top:-9%;"><img src="/images/details_icon_f_22.png" /></s><p>'+_result_2[k].crowdfundmarkMessage+'</p></h4>';
+					}else{
+						_html_2 +='<h4><s  style="top:-9%;"><img src="/images/details_icon_f_22.png" /></s><p>猪力君默默的祝福你~</p></h4>';
+					}
+					_html_2 +='</div>';
+				}
+				$(".di_b").append(_html_2);
+			}
+	    },
+	    error:function(){
+	    	
+	    }
+	});
+};
+</script>
+<style>
+.share_a {position:fixed;width:80%;background-color:#f9f9f9;border-radius:10px;top:50%;left:50%;margin-left:-40%;z-index:200;overflow:hidden;display:none;}
+.share_a h2 {font-size:3vw;padding:10% 0;text-align:center;background-color:#fff;border-bottom:1px #ddd solid;}
+.share_a h3 {font-size:3vw;text-align:center;padding:3% 0;}
+.share_a h3 a {display:inline-block;border:1px #ddd solid;border-radius:5px;background-color:#fff;padding:3% 10%;margin:0 3%;}
+.share_a h3 a i {font-style:normal;color:#f60;}
+</style>
+</head>
+
+<body onload="common()" style="background-color: #fbfbfb;">
+<span id="crowdfundPath" style="display: none"></span>
+<div class="details_inner_2">
+	<div class="device"> 
+		<div class="swiper-container">
+			  <div class="swiper-wrapper" id="swiper-wrapper">
+			  		
+			  </div>
+		</div>
+		<div class="pagination"></div>
+	</div>
+	<div class="di_a">
+		<h2><span><img  id="memberPhoto"/></span><div class="clear"></div></h2>
+		<h3><strong class="right" ><span id="detail_endTime"></span><small id="detail_small"><img src="/images/icon_322_08.png"></small></strong><span><big id="nickName"></big><font id="whenever"></font></span><div class="clear"></div></h3>
+		<dl>
+			<dt id="crowdfundTitle"></dt>
+			<dd id="crowdfundDesc"></dd>
+		</dl>
+		<h4><strong class="right" id="crowdfundRepay"></strong><span><img src="/images/icon_30_12.png" /></span><div class="clear"></div></h4>
+		<ul>
+			<li style="border:none;">
+				<span>我的红包</span>
+				<strong><big><i id="crowdfundAccount"></i></big>&nbsp;元</strong>
+			</li>
+			<li>
+				<span>收到的打赏</span>
+				<strong><big><i id="crowdfundCount"></i></big>&nbsp;次</strong>
+			</li>
+			<li>
+				<span>剩余天数</span>
+				<strong><big><i id="remainingDays"></i></big>&nbsp;天</strong>
+			</li>
+			<div class="clear"></div>
+		</ul>
+	</div>
+	<div class="di_b">
+		<div class="details_inner_gz">
+			<h4><font id="attitionCount"></font>人关注过：</h4>
+			<h5 id="attitionList"></h5>
+		</div>
+		<h6><span id="zhulicount"></span>人打赏过：</h6>
+	</div>
+</div>
+
+<div class="zhulidetails_btn_suer_zw"></div>
+<div class="zhulidetails_btn_suer">
+	<strong><a href="/index"><img src="/images/icon_50_20.png" />发现</a></strong>
+	<font><span id="ds_span"><input type="submit" value="我要打赏" class="js_btn_zltj"/></span></font>
+	<strong><a href="/helpPage" class="js_tjzl"><img src="/images/icon_60_20.png" />发布</a></strong>
+	<div class="clear"></div>
+</div>
+
+<div class="win_a">
+	<h2>马上安装为旅程攒够银两</h2>
+	<h3><a class="fhjx">返回继续</a><a href="/" class="qwxz"><i>前往下载</i></a></h3>
+</div>
+
+<div class="share_a">
+	<h2>您的打赏已成功<br />马上去发布我的讨红包！</h2>
+	<h3><a href="/helpPage"><i>马上发布</i></a><a href="/">下载APP</a></h3>
+</div>
+
+<div class="all_bg"></div>
+<div class="fx_a"><img src="/images/icon_50_03.png" /></div>
+<script type="text/javascript" src="/js/weixin/jweixin-1.0.0.js"></script>
+<script>
+wx.config({
+    debug: false,
+    appId: 'wxc4240168d70dab2f',
+    timestamp: ${timestamp},
+    nonceStr: '${nonceStr}',
+    signature: '${signature}',
+    jsApiList: [
+      'checkJsApi',
+      'onMenuShareTimeline',
+      'onMenuShareAppMessage',
+      'onMenuShareQQ',
+      'onMenuShareWeibo',
+      'hideMenuItems',
+      'showMenuItems',
+      'hideAllNonBaseMenuItem',
+      'showAllNonBaseMenuItem',
+      'translateVoice',
+      'startRecord',
+      'stopRecord',
+      'onRecordEnd',
+      'playVoice',
+      'pauseVoice',
+      'stopVoice',
+      'uploadVoice',
+      'downloadVoice',
+      'chooseImage',
+      'previewImage',
+      'uploadImage',
+      'downloadImage',
+      'getNetworkType',
+      'openLocation',
+      'getLocation',
+      'hideOptionMenu',
+      'showOptionMenu',
+      'closeWindow',
+      'scanQRCode',
+      'chooseWXPay',
+      'openProductSpecificView',
+      'addCard',
+      'chooseCard',
+      'openCard'
+    ]
+});
+wx.ready(function () {
+	//发送给朋友
+	  wx.onMenuShareAppMessage({
+	      title: $("#crowdfundTitle").html(),
+	      desc: descHtml,
+	      link: "http://www.wzshijie.com/helpPage/crowdfundDetail/"+crowdfundID*1,
+	      imgUrl:$("#crowdfundPath").html()
+	    });
+	  //分享到朋友圈
+	    wx.onMenuShareTimeline({
+	    	title: $("#crowdfundTitle").html(),
+	        link: "http://www.wzshijie.com/helpPage/crowdfundDetail/"+crowdfundID*1,
+	        imgUrl:$("#crowdfundPath").html()
+	      });
+	  //分享到QQ
+	    wx.onMenuShareQQ({
+	    	 title: $("#crowdfundTitle").html(),
+	    	 desc: descHtml,
+		      link: "http://www.wzshijie.com",
+		      imgUrl:$("#crowdfundPath").html()
+	      });
+	  //分享到Weibo
+	    wx.onMenuShareWeibo({
+	    	  title: $("#crowdfundTitle").html(),
+		      desc: descHtml,
+		      link: "http://www.wzshijie.com",
+		      imgUrl:$("#crowdfundPath").html()
+	      });
+	  //分享到 QQ 空间
+	    wx.onMenuShareQZone({
+	    	title: $("#crowdfundTitle").html(),
+		      desc: descHtml,
+		      link: "http://www.wzshijie.com",
+		      imgUrl:$("#crowdfundPath").html()
+	      });
+	    document.querySelector('#swiper-wrapper').onclick = function(){
+		    var currentUrl = $(".swiper-slide-active").find("img").attr("src");
+		    wx.previewImage({
+		        current: currentUrl, // 当前显示图片的http链接
+		        urls: urls // 需要预览的图片http链接列表
+		    }); 
+	} 
+});
+</script>
+</body>
+</html>

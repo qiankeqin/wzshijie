@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>消息</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript">
+function common(){
+	listMessage();
+	function listMessage(){
+		var storage = window.localStorage;
+		var talk_message_ul=""
+		var i=storage.length;
+		for(var s=0;s<storage.length;s++){
+	         //key(i)获得相应的键，再用getItem()方法获得对应的值
+	         var messages = JSON.parse(storage.getItem(storage.key(s)));
+			 var talkTime=getMessageTime(messages.talkTime);
+			 talk_message_ul+='<li>'
+			 talk_message_ul+='<h2><a href="friendsPage/toTalk/'+messages.membersID+'"><img src="'+messages.membersImage+'" /></a></h2>'
+			 talk_message_ul+='<dl>'
+			 talk_message_ul+='<dt><span>'+talkTime+'</span><a href="###">'+messages.membersNickName+'</a></dt>'
+			 talk_message_ul+='<dd>'+messages.messageContent+'</dd>'
+			 talk_message_ul+='</dl>'
+			 talk_message_ul+='<div class="clear"	></div>'
+			 talk_message_ul+='</li>'
+		 }
+		$("#talk_message_ul").append(talk_message_ul);
+	} 
+	
+	var bH = $(".back").height();
+	$(".title").height(bH).css("line-height",bH+"px");
+	var tIh = $(".talk").find("img").height();
+	$(".talk").css("padding-top",(bH-tIh)/2+"px");
+	$(".talk").height(bH-(bH-tIh)/2);
+	var tH = $(".search_top").outerHeight();
+	$(".books_input").css("top",tH);
+	var sH = $(".books_input").outerHeight();
+	$(".search_top_zw").height(tH+sH);
+	
+	var tH = $(".talk_footer").outerHeight();
+	$(".talk_footer_zw").height(tH);
+	
+	$(".books_input input").keyup(function(){
+		var tV = $(this).val();
+		if(tV=="搜索"){
+			
+		}else{
+			$(this).siblings("img").hide();	
+		}
+		if(tV==""){
+			$(this).siblings("img").show();	
+		}
+	});
+	var wH = $(window).height();
+	var fH = $(".footer_tianjia").height();
+	var fH2 = $("#footer").outerHeight();
+	$("#footer li:not(:eq(2))").height(fH);
+	$(".footer_zw").height(fH2);
+};
+
+</script>
+</head>
+
+<body onload="common()">
+
+<div class="message_ul">
+	<ul id="talk_message_ul">
+
+	</ul>
+</div>
+
+<div class="footer_zw"></div>
+<div id="footer"><#include "common/footer.html"></div>
+<script type="text/javascript" src="/js/common/footer.js"></script>
+</body>
+</html>

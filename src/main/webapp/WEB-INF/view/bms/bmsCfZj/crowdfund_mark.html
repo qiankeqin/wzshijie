@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台助理管理</title>
+</head>
+
+<body>
+
+  <form id="f_edit" method="post">
+    <table>
+    <input type="hidden" id="crowdfundID" name="crowdfundID" value="${crowdfund.crowdfundID}">
+     <tr>
+          <td align="right">打赏用户ID<font color="red">*</font>:</td>
+          <td><input id="membersID" class="easyui-numberspinner" style="width:80px;" required="required" data-options="min:157,max:6712">请选择157-2208或者2699-6712之间的数据</td>
+      </tr>
+      <tr>
+          <td align="right">打赏金额<font color="red">*</font>:</td>
+          <td><input id="crowdfundmarkAccount" class="easyui-numberspinner" style="width:80px;" required="required" data-options="min:1,max:100,precision:2"></td>
+      </tr>
+      <tr>
+        <td align="right">打赏留言<font color="red">*</font>:</td>
+        <td><select name="crowdfundmarkMessage" id="crowdfundmarkMessage" class="easyui-combobox" style="width:550px;">
+		        <option>请选择</option>
+		        <option>大爷高兴，打赏你点，好好的。</option>
+				<option>从自己小金库分享点爱给你哈。</option>
+				<option>记得有钱了还我，带利息滴。</option>
+				<option>把东西给我带回来，要不加倍补偿。</option>
+				<option>玩儿的开森呦!记得要带的东西哦。</option>
+				<option>别光顾自己玩儿，别把嘱托你的事儿忘了呦。</option>
+				<option>送礼喽，送礼喽，不成敬意！</option>
+				<option>天天开心就好，注意安全。</option>
+				<option>凑个热闹，给个红包。</option>
+				<option>赶紧来收礼啦，墨迹我可就回收喽！</option>
+				<option>回来给我讲故事，做人不能那么自私是不小哥儿。</option>
+				<option>别忘了我的攻略，后果很严重。</option>
+				<option>给个红包，讨个喜头。</option>
+				<option>这么大的红包，小样儿敢收不。</option>
+				<option>悄悄的祝福送来喽。</option>
+				<option>还能不能愉快地玩耍了，带个妞儿回来就给打赏。</option>
+				<option>下次记得还给我哈,连本带息滴哈哈哈。</option>
+				<option>我也来凑个热闹，安慰你一下受伤的小心灵。</option>
+				<option>给你锦上添花一下，不要客气呦。</option>
+				<option>脸皮这么厚，你知道吗！</option>
+				<option>把干粮分你一半够意思吧。</option>
+				<option>不要感谢哥，哥只是个传说。</option>
+				<option>任性地分你两毛，别说是我给的哈，这是不能说的秘密。</option>
+				<option>拿去花，谁叫我这么任性呢。</option>
+				<option>别客气别客气，咱俩谁跟谁呀。</option>
+				<option>拿走，拿走，好好玩儿，回来给我欣赏欣赏照片。</option>
+				<option>小意思收下吧，待我回头宰你一顿。</option>
+				<option>姐叫你来收红包啦，不好意思不呀！</option>
+				<option>我送的不是金钱是情谊。</option>
+				<option>说钱俗不俗啊，赶紧滴收走。</option>
+				<option>要羡慕你呦，可以去这么美的地方。</option>
+				<option>带着我的梦想也一起去吧。</option>
+				<option>梦想是伟大的，表示支持。</option>
+				<option>那是个好地方，值得走一遭。</option>
+				<option>我顶你，去吧，这小日子过得太潇洒了吧。</option>
+				<option>路上小心点，小小红包意思意思。</option>
+				<option>来添一把火，要happy呦！</option>
+				<option>来领小费啦，你说世界上怎么有我这么好的人啊！</option>
+				<option>好心人路过，你得怎么感谢我呀。</option>
+				<option>不要太感谢我哈，就是这么地土豪。</option>
+				<option>钱多花不了，分你点儿~</option>
+				<option>给你涨点人气，回来有什么好事儿别忘了我。</option>
+				<option>悄悄地走过，留下点心意。</option>
+				<option>助力成功，威武！</option>
+				<option>代我把风景也看一看。</option>
+				<option>难得有空出去，大力支持。</option>
+				<option>这么好玩儿的地方，有点小嫉妒。</option>
+				<option>尽情享受吧，旅途顺利。</option>
+				<option>祝开心呦，玩儿的愉快。</option>
+				<option>献上自己的一小份，可劲儿玩吧。</option>
+				<option>再见来不及挥手，给个红包你慢走</option>
+				<option>玩得开心一路顺风</option>
+				<option>世上只有我对你好吧！快领</option>
+				<option>别得瑟！记得带礼物，不然回来砍你！</option>
+				<option> 玩归玩，安全还是要注意的哈</option>
+				<option>这点小钱不是事，等着看你游记大片</option>
+				<option>原来还能这样玩哈，有意思，下回轮到你投资我哈！</option>
+				<option>我的红包为你护航，预祝旅途顺利！</option>
+				<option>有钱！任性！给哥好好玩！</option>
+				<option>已打赏，小主请查收</option>
+				<option>回来也教我玩，我也要装逼也要飞</option>
+				<option>你又调皮了！国外的月亮有我的脸圆吗</option>
+				<option>羡慕嫉妒恨！给我特产我不恨</option>
+				<option>趁老婆不在，塞个两块五进去</option>
+				<option>我的红包与祝福，被你承包了！</option>
+				<option>我赚的也是辛苦钱，且行且珍惜</option>
+				<option>记得在给我的明信片上写上：最可爱的人收</option>
+				<option>憋说了！外国混血儿带回一个，答应我好吗</option>
+				<option>床前明月光 红包一块三 </option>
+				<option>那么问题来了，你打算回我十倍呢还是十倍呢</option>
+				<option>别气，一毛也是爱</option>
+				<option> 如果再见不能红着眼，至少红包甩你脸</option>
+				<option>你找我要路费，你家里人知道吗</option>
+				<option>给你包了个和你颜值相称的红包，别嫌多哈</option>
+				<option>红包在此，还不快给本宫跪下！</option>
+				<option>觉得你丑给70元，觉得你蠢给80元，觉得你臭不要脸给100，现在我给250，所以你觉得你是？</option>
+				<option>发完就撤 哥绝不纠缠</option>
+				<option>土豪发红包，各种大红包！</option>
+				<option>别气，一毛也是爱</option>
+				<option>莫愁前路无红包，柳暗花明又一村</option>
+				<option>城会玩，掏10块钱的我长见识了</option>
+				<option> 山外青山楼外楼  我的红包大如牛</option>
+				<option>股票被套，赃款被盗，小蜜被泡，伟哥失效。尽管人生如此艰难，我还是掏出一块钱给你，够意思吧</option>
+				<option>已打赏，来给爷笑一个</option>
+				<option>一点小意思，真的是小意思，收下咯！</option>
+				<option>不用回报了，我只想做个安静的美男子</option>
+				<option>还能这样玩？我书读得少你别骗我</option>
+				<option>除了我还有那么多人给你打赏？对这个看脸的世界绝望了</option>
+				<option>你的梦想感觉很有道理，我居然无言以对，只能给红包了</option>
+				<option>下一次，我带着你，你带着钱，走起！</option>
+				<option>世界那么大，你先替我看</option>
+				<option>你旅行我打赏，大家都很任性</option>
+				<option> 记得给我挑最酷炫的明信片</option>
+				<option>居然还有人给1块这么多？让后面的人怎么办？</option>
+				<option>给你红包回答问题：挖掘机技术哪家强？</option>
+				<option>有你这样的朋友，真想分分钟砍死你啊</option>
+				<option>真正的朋友，即使在没钱的情况下，仍然掏出一毛钱给你</option>
+				<option>卧槽你太会玩了！我也要</option>
+				<option>向你遇见的第一个外国帅哥提起我</option>
+				<option>别说了，回来还钱</option>
+            </select>
+        </td>
+      </tr>
+    </table>
+
+    <p style="width:150px;margin-left:auto;margin-right:auto;">
+      <input type="submit" value="  提 交  " />&nbsp;&nbsp;<input type="reset"
+        value=" 重 置  " />
+    </p>
+  </form>
+  <script type="text/javascript">
+			(function() {
+				f_edit_init();
+			})();
+			function f_edit_init() {
+				$("#f_edit").validate({
+					rules : {//设置验证规则
+						"crowdfundmarkMessage" : { //input标签定义的name属性值
+							required : true
+						}
+					},
+					messages : {//设置错误信息
+						"crowdfundmarkMessage" : { //input标签定义的name属性值
+							required : "留言不能为空"
+						}
+					},
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'right',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						f_add_submit(form);
+					}
+				});
+			}
+
+			function f_add_submit(form) {
+				var membersID=$("#membersID").val();
+				var crowdfundID=$("#crowdfundID").val();
+				var crowdfundmarkAccount=$("#crowdfundmarkAccount").val();
+				var crowdfundmarkMessage=$("#crowdfundmarkMessage").combobox("getText");
+				if(membersID>2208&&membersID<2699){
+					alert("请选择157-2208或者2699-6712之间的数据");
+					return;
+				}
+			  	$.ajax({
+					url:"/ajax/bms/cf/crowdfundMarkadd",
+					data:"params={membersID:"+membersID+",crowdfundID:"+crowdfundID+",crowdfundmarkAccount:"+parseFloat(crowdfundmarkAccount*100).toFixed(0)+",crowdfundmarkMessage:'"+crowdfundmarkMessage+"'}",
+					type:"POST",
+					dataType:"json",
+					success: function(data){
+						$.messager.alert('系统提示', "打赏成功！", 'info');
+						closeW(WAddId);
+						$('#dg').datagrid('reload');
+				    },
+				    error:function(){
+				    	
+			 	    }
+				});
+				
+			}
+			
+			 
+		</script>
+</body>
+</html>

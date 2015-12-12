@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>我的</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+var membersID = ${mbID};
+$(function(){
+	myAccounts();
+});
+
+
+//个人账户信息
+function myAccounts(){
+	$.ajax({
+		url:"/account/my",
+		data:"params={membersID:"+membersID+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			$(".g_b").html("￥"+formatFloat(data.data.ms.available));
+			$(".g_c").html("(账户余额"+formatFloat(data.data.ms.balance)+"，可转出金额为"+formatFloat(data.data.ms.available)+")");
+			$("#acconts").val(formatFloat(data.data.ms.available));
+		}
+	});
+}
+
+
+function withdraw(obj){
+	var type=0;
+	var acconts=$("#acconts").val();
+	var accont=$("#accont").val();
+	var username=$("#username").val();
+	var name=$("#name").val();
+	if(accont==""||accont==null){
+		alert("请输入转出金额");
+		return;
+	}
+	if(isNaN(accont)||accont<0){
+		alert("请输入正确的转出金额");
+		return;
+	}
+	if(accont<10){
+		alert("转出金额最少为10元");
+		return;
+	}
+	if(accont.toString().split(".").length > 1 && accont.toString().split(".")[1].length > 2){
+		alert("请输入正确的转出金额");
+		return;
+	} 
+	if(accont>acconts){
+		alert("转出金额最多为"+acconts+"元");
+		return;
+	}
+	if(username==""||username==null){
+		alert("请输入支付宝账户");
+		return;
+	}
+	if(name==""||name==null){
+		alert("请输入支付宝姓名");
+		return;
+	}
+	$(obj).attr("disabled",true);
+	$.ajax({
+		url:"/account/withdraw",
+		data:"params={membersID:"+membersID+",type:"+type+",accont:"+parseFloat(accont*100).toFixed(0)+",username:'"+username+"',name:'"+name+"'}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			if(data.result==true){
+				$(".win_a,.all_bg").show();
+				var wH = $(".win_a").height();
+				$(".win_a").css("margin-top",-wH/2);
+			}else{
+				alert("支付宝姓名与身份证信息不匹配!");
+				return;
+			}
+		}
+	}); 
+}
+
+function formatFloat(tempData){
+	var obj = tempData/100;
+	return parseFloat(obj.toFixed(2));
+}
+
+
+function common(){
+	$(".ljfx").click(function(){
+		$(".win_a,.all_bg").hide();
+		location.href = "/accountsPage/myAccounts"; 
+	});
+};
+</script>
+</head>
+<body onload="common()">
+<div class="g_b" style="color:#000;padding-top:8%;"></div>
+<div class="g_c"></div>
+<div class="s_a">
+	<div class="s_b">
+	    <input type="hidden" id="acconts" name="acconts"/>
+		<h2><span>转出金额（元）</span><label><input type="text" id="accont" name="accont"/></label></h2>
+		<h2><span>支付宝账户</span><label><input type="text" id="username" name="username"/></label></h2>
+		<h2 style="border-bottom:none;"><span>支付宝姓名</span><label><input type="text" id="name" name="name"/></label></h2>
+	</div>
+</div>
+<div class="s_e"><a onclick="withdraw(this)" class="btn_tjsh">转出到支付宝账户</a></div>
+<div class="s_f">1-3个工作日到账</div>
+<div class="all_bg"></div>
+<div class="win_a win_all">
+	<h2 style="text-align:left;padding:10%;">您的转出已成功，请耐心等待审核，预计1-3个工作日到账</h2>
+	<h3><a href="javascript:void(0)" class="ljfx">确定</a></h3>
+</div>
+</body>
+</html>

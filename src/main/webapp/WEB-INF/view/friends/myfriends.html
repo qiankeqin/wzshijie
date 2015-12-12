@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>好友</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/slidernav.js"></script>
+<script type="text/javascript">
+var membersID=${crrrentMember.membersID};
+function common(){
+	var key=$("#key").val();
+	$.ajax({
+		url:"/user/findfriends",
+		data:"params={membersID:"+membersID+",key:'"+key+"'}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			var _result = ""
+			var arrs = data.data;
+			if(arrs.totalCount!=0){
+				    var arrarys = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","#"];
+					for(var z=0;z<arrarys.length;z++){
+							for(var b=0;b<arrs.length;b++){
+									if(arrarys[z]==arrs[b].membersNamePY){
+										_result+='<li id="'+arrarys[z]+'"><a name="'+arrarys[z]+'" class="title">'+arrarys[z]+'</a>'
+										_result+='<ul>'
+											for(var i=0;i<arrs.length;i++){
+													if(arrarys[z]==arrs[i].membersNamePY){
+													_result+='<li><a href="/friendsPage/toTalk/'+arrs[i].membersID+'">'+arrs[i].membersNickName+'</a></li>'
+													}
+											}
+										b++;
+										_result+='</ul>'
+										_result+='</li>'
+										break;
+									}
+									
+							}
+
+					}
+			}
+			$(".slider-content ul").html(_result);
+			
+			
+			var bH = $(".back").height();
+			$(".title").height(bH).css("line-height",bH+"px");
+			var tIh = $(".talk").find("img").height();
+			$(".talk").css("padding-top",(bH-tIh)/2+"px");
+			$(".talk").height(bH-(bH-tIh)/2);
+			var tH = $(".search_top").outerHeight();
+			$(".books_input").css("top",tH);
+			var sH = $(".books_input").outerHeight();
+			$(".search_top_zw").height(tH+sH);
+			
+			var tH = $(".talk_footer").outerHeight();
+			$(".talk_footer_zw").height(tH);
+			
+			$(".books_input input").keyup(function(){
+				var tV = $(this).val();
+				if(tV=="搜索"){
+					
+				}else{
+					$(this).siblings("img").hide();	
+					$.ajax({
+						url:"/user/findfriends",
+						data:"params={membersID:"+membersID+",key:'"+tV+"'}",
+						type:"POST",
+						dataType:"json",
+						success: function(data){
+							var _result = ""
+							var arrs = data.data;
+							if(arrs.totalCount!=0){
+								    var arrarys = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","#"];
+									for(var z=0;z<arrarys.length;z++){
+											for(var b=0;b<arrs.length;b++){
+													if(arrarys[z]==arrs[b].membersNamePY){
+														_result+='<li id="'+arrarys[z]+'"><a name="'+arrarys[z]+'" class="title">'+arrarys[z]+'</a>'
+														_result+='<ul>'
+															for(var i=0;i<arrs.length;i++){
+																	if(arrarys[z]==arrs[i].membersNamePY){
+																	_result+='<li><a href="/friendsPage/toTalk/'+arrs[i].membersID+'">'+arrs[i].membersNickName+'</a></li>'
+																	}
+															}
+														b++;
+														_result+='</ul>'
+														_result+='</li>'
+														break;
+													}
+											}
+
+									}
+							}
+							$(".slider-content ul").html(_result);
+						},
+					    error:function(){
+					    	
+					    }
+					});
+				}
+				if(tV==""){
+					$(this).siblings("img").show();	
+				}
+			});
+			
+			$('#slider').sliderNav();
+			
+			var wH = $(window).height();
+			//$("#slider,.slider-content,.slider-nav").css("height",wH-tH-sH-50);
+			
+			var fH = $(".footer_tianjia").height();
+			var fH2 = $("#footer").outerHeight();
+			$("#footer li:not(:eq(2))").height(fH);
+			$(".footer_zw").height(fH2);
+	    },
+	    error:function(){
+	    	
+	    }
+	});	
+};
+</script>
+</head>
+
+<body onload="common()">
+
+<div class="books_input">
+	<h2>
+		<img src="/images/icon_search_a_07.png" /><input type="text" id="key" name="key" placeholder="搜索"/>
+	</h2>
+</div>
+
+<div id="slider">
+	<div class="slider-content">
+		<ul>
+		</ul>
+	</div>
+</div>
+
+<div class="footer_zw"></div>
+<div id="footer"><#include "common/footer.html"></div>
+<script type="text/javascript" src="/js/common/footer.js"></script>
+</body>
+</html>

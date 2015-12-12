@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台举报记录管理</title>
+</head>
+
+<body>
+
+  <form id="f_edit" method="post">
+    <input name="reportRecordID" id="reportRecordID" type="hidden" value="${reportRecord.reportRecordID}">
+    <table>
+      <tr>
+        <td align="right">举报人ID<font color="red">*</font>:</td>
+        <td><input name="reportRecordMumberID" id="reportRecordMumberID" value="${reportRecord.reportRecordMumberID}" style="width:500px;"/></td>
+      </tr>
+      <tr>
+        <td align="right">举报人手机号<font color="red">*</font>:</td>
+        <td><input name="reportRecordPhone" id="reportRecordPhone" value="${reportRecord.reportRecordPhone}" style="width:500px;"/></td>
+      </tr>
+       <tr>
+        <td align="right">举报人昵称<font color="red">*</font>:</td>
+        <td><input name="reportRecordName" id="reportRecordName" value="${reportRecord.reportRecordName}" style="width:500px;"/></td>
+      </tr>
+      <tr>
+        <td align="right">发布内容ID<font color="red">*</font>:</td>
+        <td><input name="crowdfundID" id="crowdfundID" value="${reportRecord.crowdfundID}" style="width:500px;"/></td>
+      </tr>
+      <tr>
+        <td align="right">发布人ID<font color="red">*</font>:</td>
+        <td><input name="membersID" id="membersID" value="${reportRecord.membersID}" style="width:500px;"/></td>
+      </tr>
+       <tr>
+        <td align="right">发布人手机号<font color="red">*</font>:</td>
+        <td><input name="membersPhone" id="membersPhone" value="${reportRecord.membersPhone}" style="width:500px;"/></td>
+      </tr>
+      <tr>
+          <td align="right">举报内容<font color="red">*</font>:</td>
+          <td><textarea  name="reportContent" rows="5" cols="70" readonly="readonly">${reportRecord.reportContent}</textarea></td>
+      </tr>
+       <tr>
+        <td align="right">举报图片<font color="red">*</font>:</td>
+        <td><img src="${reportRecord.reportImage}" width='148' height='198' /></td>
+      </tr>
+    </table>
+  </form>
+</body>
+</html>

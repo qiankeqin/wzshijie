@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——后台助理管理</title>
+
+</head>
+
+<body>
+
+  <form id="f_edit" method="post">
+    <input name="crowdfundID" id="crowdfundID" type="hidden" value="${crowdfund.crowdfundID}" readonly="readonly">
+    <table>
+      <tr>
+        <td align="right">标题:</td>
+        <td><input name="crowdfundTitle" id="crowdfundTitle" value="${crowdfund.crowdfundTitle}" style="width:500px;" readonly="readonly"/></td>
+      </tr>
+      <tr>
+        <td align="right">详情:</td>
+        <td><input name="crowdfundDesc" id="crowdfundDesc" value="${crowdfund.crowdfundDesc}" style="width:500px;"/></td>
+      </tr>
+      <tr>
+        <td align="right">图片:</td>
+        <td style="position: relative;">
+ 	      	<#list "${crowdfund.crowdfundPic }"?split(",") as image>
+ 	      	<span>
+ 	      	<a style="height:16px;width:16px;" class="panel-tool-close"></a>
+	       	<label><img src='${image}' width='148' height='198' /></label>
+	       	</span>
+	         </#list> 
+ 	      	</td>
+      </tr>
+      <tr>
+         <td align="right">回报:</td>
+         <td><textarea  name="crowdfundRepay" rows="3" cols="70" readonly="readonly">${crowdfund.crowdfundRepay}</textarea></td>
+      </tr>
+    </table>
+
+    <p style="width:150px;margin-left:auto;margin-right:auto;">
+      <input type="button" value="  编   辑     " onclick="openWEdit();"/>
+    </p>
+  </form>
+  <table id="dgzlck"></table>
+
+  <script type="text/javascript">
+          var crowdfundID=${crowdfund.crowdfundID};
+  
+		  function openWEdit() {
+			    closeW(WAddId);
+				var wUrl = "/bms/crowdfund/"+crowdfundID+"/edit";
+				openW(WEditId, "助力修改", wUrl, "750px");
+			}
+            
+			var $dg = $('#dgzlck');//表格 列表
+
+			$dg.datagrid({
+						url : '/ajax/bms/crowdfundMark/list',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : false
+						} ] ],
+						queryParams: {
+							crowdfundID:crowdfundID
+						},
+						idField : 'crowdfundID',//标识字段
+						columns : [ [
+								{
+									field : 'crowdfundmarkID',
+									title : 'id',
+									width:100,
+									hidden:true
+								},
+								{
+									field : 'membersNickName',
+									title : '助力人姓名',
+									width:100,
+								},{
+									field : 'crowdfundmarkAccount',
+									title : '助力金额',
+									width:80,
+									formatter : function(value, row, index) {
+										return formatFloat(row.crowdfundmarkAccount);
+									}
+								},
+								{
+									field : 'crowdfundmarkMessage',
+									title : '助力留言',
+									width:300
+								},
+								{
+									field : 'createTime',
+									title : '助力时间',
+									width:150
+								}] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+		</script>
+</body>
+</html>

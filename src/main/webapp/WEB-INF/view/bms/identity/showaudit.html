@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>查看已审核用户</title>
+</head>
+<body>
+    <table align="center">
+     	<tr>
+	        <td align="right" ></td>
+	        <td align="center" style="color:red;font-size: 16px;font-weight: bold;">${ic.idCardRecordState}</td>
+	      </tr>
+	     <tr>
+	        <td align="right" >身份证号:</td>
+	        <td><input name="idCardNum" value="${ic.idCardNum}" readonly="readonly"/></td>
+	      </tr>
+          <tr>
+            <td align="right" >姓名:</td>
+            <td><input name="idCardName" value="${ic.idCardName}" readonly="readonly"/></td>
+          </tr>
+	      <tr>
+	        <td align="right" >身份证正面:</td>
+	        <td><img name="correctSideImage" src="${ic.correctSideImage}" width='750' height='500'></td>
+	      </tr>
+	      <tr>
+	        <td align="right">身份证反面:</td>
+	        <td><img name="correctSideImage" src="${ic.oppositeSideImage}" width='750' height='500'></td>  
+	      </tr>
+    </table>
+</body>
+</html>

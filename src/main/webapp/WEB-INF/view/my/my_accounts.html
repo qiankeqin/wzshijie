@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>我的</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+var membersID = ${crrrentMember.membersID};
+var identify = ${crrrentMember.identifyState};
+function common(){
+	$(".btn_ljtx").click(function(){
+		if(identify==0){
+			$(".win_a0,.all_bg").show();
+			var wH = $(".win_a0").height();
+			$(".win_a0").css("margin-top",-wH/2);
+		}
+		if(identify==1){
+			$(".win_a1,.all_bg").show();
+			var wH = $(".win_a1").height();
+			$(".win_a1").css("margin-top",-wH/2);
+		}
+		if(identify==2){
+			location="/myPage/withdraw/"+membersID;
+		}
+		if(identify==3){
+			$(".win_a3,.all_bg").show();
+			var wH = $(".win_a3").height();
+			$(".win_a3").css("margin-top",-wH/2);
+		}
+		
+	});
+	
+	$(".ljfx").click(function(){
+		$(".win_a0,.all_bg").hide();
+		$(".win_a1,.all_bg").hide();
+		$(".win_a3,.all_bg").hide();
+	});
+	
+	$(".btn_qbsm").click(function(){
+		$(".hb_t,.all_bg").show();
+		$("body").css("overflow","hidden");
+		
+		var h1H = $(".hb_t_i h1").height();
+		$(".hb_t_i h1 span").height(h1H*0.8);
+		$(".hb_t_i h1 span").width(h1H*0.8);
+		var sH = $(".hb_t_i h1 span").height();
+		$(".hb_t_i h1 span").css("margin-top",-sH/2);
+	});
+	
+	$(".btn_c1").click(function(){
+		$(".hb_t,.all_bg").hide();
+		$("body").css("overflow","auto");
+	});
+	
+	var tH = $(".hb_t").height();
+	$(".hb_t_w").height(tH);
+	$(".hb_t_i").height(tH*0.8);
+	var nH = $(".hb_t_i").height();
+	$(".hb_t_i").css({
+		"margin-top":-nH/2
+	});
+	var h1H = $(".hb_t_i h1").height();
+	$(".hb_t_i p").height((nH-h1H)*0.82);
+};
+
+$(function(){
+	myAccounts();
+	myDetailsList();
+	user_identify();
+});
+
+//个人账户信息
+function myAccounts(){
+	$.ajax({
+		url:"/account/my",
+		data:"params={membersID:"+membersID+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			$(".g_b").html("￥"+formatFloat(data.data.ms.balance));
+			$(".g_c").html("(账户余额"+formatFloat(data.data.ms.balance)+"，可转出金额为"+formatFloat(data.data.ms.available)+")");
+			$("#shoudao").html(formatFloat(data.data.ms.get));
+			$("#tixian").html(formatFloat(data.data.ms.withdraw));
+		}
+	});
+}
+
+
+//个人账户信息记录
+function myDetailsList(){
+	$.ajax({
+		url:"/AccountDetails/aDetailsList",
+		data:"params={membersID:"+membersID+",page:"+1+",size:"+10000+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			    var _html = '';
+				var arrs = data.data.list;
+				
+				for(var i=0;i<arrs.length;i++){
+					var type=arrs[i].type;
+					if(type==1){
+						type="收到";
+						type1="已到账";
+						type2="+";
+					}if(type==2){
+						type="转出";
+						type1="转出";
+						type2="-";
+					}
+					_html+='<li>';
+					_html+='<a href="###">';
+					_html+='<div class="g_h"><img src="'+arrs[i].image+'" /></div>';
+					_html+='<div class="g_i">';
+					_html+='<h2><strong><i>'+type2+''+formatFloat(arrs[i].account)+'</i></strong><span>'+type+'--'+arrs[i].nickname+'</span></h2>';
+					_html+='<h3><strong>'+type1+'</strong><span>'+arrs[i].createTime+'</span></h3>';
+					_html+='</div>';
+					_html+='<div class="clear"></div>';
+					_html+='</a>';
+					_html+='</li>';
+			    }
+		$("#AccountDetails_ul").html(_html)
+		}
+	});			
+}
+
+function user_identify(){
+	if(identify==0){
+		$(".g_fl").html("<img src='/images/icon_302_03.png'/>");
+	}
+	if(identify==1){
+		$(".g_fl").html("<img src='/images/icon_301_04.png'/>");
+	}
+	if(identify==2){
+		$(".g_fl").html("<img src='/images/icon_301_03.png'/>");
+	}
+	if(identify==3){
+		$(".g_fl").html("<img src='/images/icon_301_05.png'/>");
+	}
+}
+
+function ljrz(){
+	location="/myPage/checkIdCard/"+membersID;
+}
+function formatFloat(tempData){
+	var obj = tempData/100;
+	return parseFloat(obj.toFixed(2));
+}
+
+</script>
+</head>
+<body onload="common()">
+<div class="g_fl"></div>
+<div class="g_a"><a href="###"><img src="${crrrentMember.membersImage}" /></a></div>
+<div class="g_b"></div>
+<div class="g_c"></div>
+<div class="g_d"><a href="##" class="btn_ljtx">立即转出</a></div>
+<div class="g_e"><a href="###" class="btn_qbsm">转出说明<span><img src="/images/icon_300_03.png" /></span></a></div>
+<div class="g_f">
+	<a><font><span id="shoudao"></span><strong>收到</strong></font></a>
+	<a><font style="border:none;"><span id="tixian"></span><strong>转出</strong></font></a>
+	<div class="clear"></div>
+</div>
+<div class="g_g">
+	<ul id="AccountDetails_ul">
+	
+	</ul>
+</div>
+<!-- <div class="g_j"><a href="###">查看更多明细</a></div> -->
+
+<div class="all_bg"></div>
+<div class="win_a0 win_all">
+	<h2>尊敬的用户您好<br/>转让需要进行身份认证</h2>
+	<h3><a onclick="ljrz();" style="cursor: pointer;"><i>立即认证</i></a><a style="cursor: pointer;" class="ljfx">我再想想</a></h3>
+</div>
+<div class="win_a1 win_all">
+	<h2>尊敬的用户您好<br/>你提交的信息正在审核，请耐心等待</h2>
+	<h3><a style="cursor: pointer;" class="ljfx">我再等等吧</a></h3>
+</div>
+<div class="win_a3 win_all">
+	<h2>尊敬的用户您好<br/>你提交的信息未通过请重新上传</h2>
+	<h3><a onclick="ljrz();" style="cursor: pointer;"><i>重新认证</i></a><a style="cursor: pointer;" class="ljfx">我再想想</a></h3>
+</div>
+
+<div class="hb_t">
+	<div class="hb_t_w">
+		<div class="hb_t_i">
+			<h1>转出说明<span class="btn_c1"><img src="/images/icon_100_03.png" /></span></h1>
+			<div>
+			<p style="text-indent: 2em">旅游电子红包系玩赚世界联合众多旅游生活服务商共同发布，平台鼓励您在玩赚世界合作商享受超值服务（服务商陆续完善中）。如您确有需要，可通过转让兑换红包。</p>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

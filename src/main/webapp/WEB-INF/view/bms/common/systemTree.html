@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#systemTree').tree({  
+		url:'/ajax/bms/menu/tree',
+		method:'get',
+		onClick: function(data){
+			var url = data.attributes.url;
+	    	if(null != url && '' != url){
+			     if ($('#tt').tabs('exists', data.text)){
+			         $('#tt').tabs('select', data.text);
+			     } else {
+					var height = $('#tt').height()-$('#tt>.tabs-header').height();
+					var content = '<iframe width="100%" height='+height+' src="'+url+'" frameborder="no" border="0" marginwidth="0" marginheight="0" allowtransparency="yes"></iframe>';
+					$('#tt').tabs('add',{
+			            title:data.text,
+			            content:content,
+			            closable:true
+			         });
+			     }
+	    	}
+		},
+		loadFilter: function(data){    
+	            return data.data;
+	    } 
+	}); 
+});
+</script>
+<ul id="systemTree"></ul>  

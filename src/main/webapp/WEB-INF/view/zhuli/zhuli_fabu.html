@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>讨红包</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/dist/lrz.bundle.js"></script>
+<script type="text/javascript" src="/js/toast.js"></script>
+<style>
+.win_h {
+  position: fixed;
+  width: 70%;
+  background-color: #fff;
+  border-radius: 5px;
+  top: 50%;
+  left: 50%;
+  margin-left: -40%;
+  z-index: 200;
+  overflow: hidden;
+  padding: 5%;
+  display: none;
+}
+.win_h a {
+  font-size: 3vw;
+  background-color: #2695be;
+  display: inline-block;
+  margin-right: 2%;
+  margin-bottom: 2%;
+  color: #fff;
+  padding: 2%;
+  border-radius: 5px;
+}
+.win_t {
+  position: fixed;
+  width: 70%;
+  background-color: #fff;
+  border-radius: 5px;
+  top: 50%;
+  left: 50%;
+  margin-left: -40%;
+  z-index: 200;
+  overflow: hidden;
+  padding: 5%;
+  display: none;
+}
+.win_t a {
+  font-size: 3vw;
+  background-color: #2695be;
+  display: inline-block;
+  margin-right: 2%;
+  margin-bottom: 2%;
+  color: #fff;
+  padding: 2%;
+  border-radius: 5px;
+}
+.file{  
+	display:inline-block;
+	border-radius:50%;
+	width:100%;
+	height:100%;
+	cursor:pointer;  
+	background:none;
+	border:none;
+	opacity: 0;
+	z-index:2;
+	position: absolute;
+	top:0;
+	left:0;
+} 
+#input_title,#input_hb{
+    border:none;
+    padding: 2% 3%; 
+    outline: 0; 
+    font-size: 12px; 
+    word-wrap: break-word;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-user-modify: read-write-plaintext-only;
+    font-size:4vw;
+}
+.x_e ul li strong {
+	display: block;
+}
+.x_e ul li a {
+  display: block;
+  width: 30%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.x_e ul li a img {
+  width: 100%;
+  border:none;
+}
+</style>
+<script type="text/javascript">
+var membersID = ${crrrentMember.membersID};
+function common(){
+	var arr = ['Diao丝也想看世界，每一笔帮助都是“巨款”，无论是资助我50元的李雷同学，还是100元的韩梅梅，当地纪念品、化妆品代购都不在话下。资助我1万元的土豪朋友，等我旅行回来，大腿给我抱俩月可好？','意大利是我的梦想之地，无奈经费紧张，几度搁浅。感谢拉钩让我遇见你，若你出手相助，我会为你捎上当地小礼品，或是给你分享我的旅行故事，当然我也愿意为你目的地的亲人朋友送上祝福。','有了你们的帮助我就可以实现梦想了，很期待这次旅行，当地还有很多精致的工艺品，虽然并不很贵重，我会亲自为你们挑选一些作为感谢，you are the best！','感谢小主爱的供养！我想和这个世界谈谈关于您的回报：支持10元，各地的明信片漂洋过海来看你支持50元，各地的地方特色纪念品在你家总有合适的角落支持100元，将你觉得有象征意义的东西，在我经过的地方，和当地景色合照，虽不能至，心向往之~'];
+	$(".win_d a:nth-child(2n)").css("background-color","#e98b52");
+	$(".win_d a:nth-child(3n)").css("background-color","#2695be");
+	$(".win_t a:nth-child(2n)").css("background-color","#e98b52");
+	$(".win_t a:nth-child(3n)").css("background-color","#2695be");
+	
+	$(".all_bg").click(function(){
+		$(".all_bg,.win_d,.win_h,.win_t").hide();
+	});
+	//标题
+	$(".btn_mbwz").click(function(){
+		$(".all_bg,.win_d").show();
+		var dH = $(".win_d").height();
+		$(".win_d").css("margin-top",-dH/2);
+		$(".btn_mbwz").removeClass("btn_mbwz_2");
+		$(this).addClass("btn_mbwz_2");
+	});
+	$(".win_d a").click(function(){
+		var tT = $(this).text();
+		var tI = $(this).index();
+		$("#input_title").html(tT);
+		$(".win_h a").html(arr[tI]);
+		$(".all_bg,.win_d").hide();
+	});
+	//截止日期
+	$(".btn_ksxz").click(function(){
+		$(".all_bg,.win_t").show();
+		var dH = $(".win_t").height();
+		$(".win_t").css("margin-top",-dH/2);
+		$(".btn_ksxz").removeClass("btn_ksxz_2");
+		$(this).addClass("btn_ksxz_2");
+	});
+	$(".win_t a").click(function(){
+		var tT = $(this).attr("lang");
+		$("#limit_date").val(tT);
+		$(".all_bg,.win_t").hide();
+	});
+	//回报
+	$(".btn_hbmb").click(function(){
+		if($("#input_title").html().trim() == ""||$("#input_title").text() == '请输入标题文字'){
+			$(".win_h a").html('感谢小主爱的供养！我想和这个世界谈谈关于您的回报：支持10元，各地的明信片漂洋过海来看你支持50元，各地的地方特色纪念品在你家总有合适的角落支持100元，将你觉得有象征意义的东西，在我经过的地方，和当地景色合照，虽不能至，心向往之~');
+		}
+		$(".all_bg,.win_h").show();
+		var dH = $(".win_h").height();
+		$(".win_h").css("margin-top",-dH/2);
+		$(".btn_hbmb").removeClass("btn_hbmb_2");
+		$(this).addClass("btn_hbmb_2");
+	});
+	$(".win_h a").click(function(){
+		var tT = $(this).text();
+		$("#input_hb").html(tT);
+		$(".all_bg,.win_h").hide();
+	});
+	
+};
+
+function upload(obj){
+	if($(".upload_img").length>3){
+		new Toast({context:$('body'),message:'只能添加四张图片'}).show();
+		return;
+	}
+	var that = obj;
+	$("#loadingImg").show();
+	lrz(that.files[0],{width: 800,height:800,quality: 0.2}).then(function (rst) {
+		  var imgheight = $("#firstImage").height();
+    	$.ajax({
+    		url:"/uploadfile/weixin",
+    		data:{imgStr:rst.base64},
+    		type:"POST",
+    		dataType:"json",
+    		beforeSend:function(){
+    		},
+    		success: function(data){
+    			$("#loadingImg").hide();
+    			if(data.result==true){
+    				if(data.data.length!=0){
+            			$("#imageArr").append('<li class="upload_img" style="position: relative;"><strong><img src="'+data.data[0]+'" style="height:'+imgheight+'px;"/></strong><a onclick="closeImg(this);"><img src="/images/icon_202_07.png" /></a></li>');
+            			var aW = $(".x_e ul a img").width();
+            			$(".x_e ul a").css({
+            				"margin-top":-aW/2,
+            				"margin-right":-aW/2
+            			});
+            		}
+    			}else{
+    				new Toast({context:$('body'),message:data.message}).show();
+    			}
+    	    },
+    	    error:function(){
+    	    	$("#loadingImg").hide();
+     	    }
+    	});
+    });
+}
+function helpSubmit(){
+	if($.trim($("#input_title").text())==""||$.trim($("#input_title").text())=='请输入标题文字'){
+		new Toast({context:$('body'),message:'请输入标题文字'}).show();
+		return;
+	}
+	if($.trim($("#input_hb").text())==""||$.trim($("#input_hb").text())=="让给你打赏的小伙伴更有动力"){
+		new Toast({context:$('body'),message:'请输入你的回报'}).show();
+		return;
+	}
+	if($.trim($("#limit_date").val().replace("天",""))==""){
+		new Toast({context:$('body'),message:'请输入截止时间'}).show();
+		return;
+	}
+	var re = /^[0-9]*[1-9][0-9]*$/ 
+    if (!re.test($("#limit_date").val().replace("天",""))) { 
+        new Toast({context:$('body'),message:'请输入正确的截止时间'}).show();
+        return;
+    } 
+	var backImage = "";
+	var crowdfundPic = "";
+	$(".upload_img").each(function(i){
+		if(i==0){
+			backImage = $(this).find("img").attr("src");
+		}
+		crowdfundPic+=$(this).find("img").attr("src")+",";
+	});
+	if(backImage == "" ||backImage==null){
+		new Toast({context:$('body'),message:'请添加照片'}).show();
+		return;
+	}
+	if(crowdfundPic!=""){
+		crowdfundPic = crowdfundPic.substring(0, crowdfundPic.length-1);
+	}
+	var crowdfundDesc = $.trim($("#help_note").text());
+    if($.trim($("#help_note").text())=="写点吸睛又感人文字，要不我是不会帮你发布的"){
+    	crowdfundDesc = "";
+	}
+	var crowdfundTitle = $.trim($("#input_title").text());
+	var crowdfundDays = $.trim($("#limit_date").val()).replace("天","");
+	var crowdfundRepay = $.trim($("#input_hb").text());
+	var globel = {
+			"membersID":membersID,
+			"crowdfundTitle":crowdfundTitle,
+			"crowdfundPic":crowdfundPic,
+			"crowdfundDesc":crowdfundDesc,
+			"crowdfundVoice":'',
+			"crowdfundPath":backImage,
+			"crowdfundDays":crowdfundDays,
+			"crowdfundRepay":crowdfundRepay
+	};
+	var globelStr = JSON.stringify(globel);
+	$("#sureSubmit1").hide();
+	$("#sureSubmit2").show();
+	$.ajax({
+		url:"/help/save",
+		data:"params="+globelStr,
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			if(data.result==false){
+				new Toast({context:$('body'),message:'添加失败，请重试'}).show();
+				$("#sureSubmit2").hide();
+				$("#sureSubmit1").show();
+			}else{
+				location="/helpPage/crowdfundFourDetail/"+data.data.crowdfundID;
+			}
+	    },
+	    error:function(){
+	    	$("#sureSubmit2").hide();
+			$("#sureSubmit1").show();
+ 	    }
+	});
+};
+
+function closeImg(obj){
+	$(obj).parent().remove();
+}
+function titleKeyDown(){
+	if($("#input_title").text()=="请输入标题文字"){
+		$("#input_title").html("");
+	}
+}
+function titleKeyUp(){
+	if($("#input_title").text()==""){
+		$("#input_title").html('<i style="color:#a9a9a9;font-style: normal;">请输入标题文字</i>');
+	}
+}
+function hbKeyDown(){
+	if($("#input_hb").text()=="让给你打赏的小伙伴更有动力"){
+		$("#input_hb").html("");
+	}
+}
+function hbKeyUp(){
+	if($("#input_hb").text()==""){
+		$("#input_hb").html('<i style="color:#a9a9a9;font-style: normal;">让给你打赏的小伙伴更有动力</i>');
+	}
+}
+function noteKeyDown(){
+	if($("#help_note").text()=="写点吸睛又感人文字，要不我是不会帮你发布的"){
+		$("#help_note").html("");
+	}
+}
+function noteKeyUp(){
+	if($("#help_note").text()==""){
+		$("#help_note").html('<i style="color:#a9a9a9;font-style: normal;">写点吸睛又感人文字，要不我是不会帮你发布的</i>');
+	}
+}
+function limitFocus(obj){
+	var currentVal = $.trim($(obj).val());
+	$(obj).val(currentVal.replace("天",""));
+}
+function limitBlur(obj){
+	var currentVal = $.trim($(obj).val());
+	if(currentVal!=""){
+		$(obj).val(currentVal+"天");
+	}
+}
+</script>
+</head>
+
+<body onload="common()" style="background-color: #fbfbfb;">
+<div style="padding:2%;"></div>
+<div class="x_a">
+	<div class="x_b left"><i><img src="/images/icon_350_03.png" /></i><span>标题</span></div>
+	<div class="x_c left" ><div id="input_title" contenteditable="true" style="padding:0;margin:0;" onmouseover="titleKeyDown();" onmouseout="titleKeyUp()" ><i style="color:#a9a9a9;font-style: normal;">请输入标题文字</i></div></div>
+	<div class="x_d left btn_mbwz">模版<i><img src="/images/icon_357_22.png" /></i></div>
+	<div class="clear"></div>
+</div>
+<div class="x_a">
+	<div class="x_b left"><i><img src="/images/icon_351_07.png" /></i><span>回报</span></div>
+	<div class="x_c left"><div id="input_hb" contenteditable="true" style="padding:0;margin:0;min-height: 68px;" onmouseover="hbKeyDown();" onmouseout="hbKeyUp()"><i style="color:#a9a9a9;font-style: normal;">让给你打赏的小伙伴更有动力</i></div></div>
+	<div class="x_d left btn_hbmb">模版<i><img src="/images/icon_357_22.png" /></i></div>
+	<div class="clear"></div>
+</div>
+<div class="x_a" style="border-bottom:none;">
+	<div class="x_b left"><i><img src="/images/icon_352_11.png" /></i><span>介绍</span></div>
+	<div class="x_c left" style="width:75%;margin-right:5%;"><div id="help_note" style="min-height: 88px;" contenteditable="true" onmouseover="noteKeyDown();" onmouseout="noteKeyUp()"><i style="color:#a9a9a9;font-style: normal;">写点吸睛又感人文字，要不我是不会帮你发布的</i></div></div>
+	<div class="clear"></div>
+</div>
+<div class="x_e">
+	 <ul id="imageArr">
+		   <li><strong style="position: relative;display: block;"><img src="/images/icon_353_15.jpg" id="firstImage"/><input class="file" type="file" name="file" id="file" capture="camera" onChange = "upload(this)"/></strong></li>
+	 </ul>
+	  <ul id="loadingImg" style="display: none;">
+		   <li><strong style="position: relative;display: block;"><img src="/images/loadingImg.gif" id="secondImage"/></strong></li>
+	 </ul>
+	<div class="clear"></div>
+</div>
+<div class="x_a" style="border-bottom:none;">
+	<div class="x_b left" style="width:77%;text-align:left;margin-left:3%;"><i style="width:3%;margin-right:1%;margin-top:0%;"><img src="/images/icon_356_19.png" /></i><span>截止时间</span>&nbsp;&nbsp;<input type="text" value="30天" placeholder="" style="color: #999;" id="limit_date" onfocus="limitFocus(this)" onblur="limitBlur(this)" /></div>
+	<div class="x_d left btn_ksxz" >选择<i><img src="/images/icon_357_22.png" /></i></div>
+	<div class="clear"></div>
+</div>
+<div class="tj_c" style="margin:10% 5% 10%;"><a id="sureSubmit1"  onclick="helpSubmit(this)">确认提交</a><a id="sureSubmit2" style="background-color:#c9c9c9;display: none;">正在提交中<img src="/images/submit_loading.gif" style="vertical-align: middle;width: 10%;margin-left: 4px;"/></a></div>
+<div class="tj_d" style="margin: 0 5% 10%;">
+		<img src="/images/my_guanzhu_01.png" style="width:100%;"/>
+</div>
+<div class="all_bg"></div>
+<div class="win_d">
+	<a>Diao丝求助一笔之力</a><a>空有一颗旅行的心，奈何却囊中羞涩</a><a>听说打赏我的人都会找到真正的幸福</a>
+</div>
+<div class="win_t" style="text-align:center;">
+	<a lang="3天">3天</a><a lang="5天">5天</a><a lang="7天">7天</a><a lang="14天">14天</a>
+</div>
+<div class="win_h">
+	<a>感谢小主爱的供养！我想和这个世界谈谈关于您的回报：支持10元，各地的明信片漂洋过海来看你支持50元，各地的地方特色纪念品在你家总有合适的角落支持100元，将你觉得有象征意义的东西，在我经过的地方，和当地景色合照，虽不能至，心向往之~</a>
+</div>
+</body>
+</html>

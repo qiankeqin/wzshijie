@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>菜单编辑</title>
+</head>
+<body>
+	
+   
+  <form id="f_edit" method="post">
+    <input name=menuID id="menuID" type="hidden" value="${menus.menuID}">
+    <table>
+     <tr>
+        <td align="right">所属上级<font color="red">*</font>:</td>
+        <td><input id="sel_tree" name="parentId"
+          value="${menus.parentId }" class="easyui-combotree"
+          data-options="url:'/ajax/bms/menu/addTree',method:'get'" style="width:300px"></select></td>
+      </tr>
+      <tr>
+        <td align="right">菜单名称:</td>
+        <td><input name="menuName" id="menuName" value="${menus.menuName}"  style="width:150px;"/></td>
+      </tr>
+       <tr>
+        <td align="right">菜单url:</td>
+        <td><input name="url" id="url" value="${menus.url}"  style="width:150px;"/></td>
+      </tr>
+     
+        <tr>
+        <td align="right">是否最终<font color="red">*</font>
+        </td>
+        <td><input name="isFinal" value="1" type="radio" <#if menus.isFinal==1>checked</#if>/>否&nbsp;&nbsp;<input
+          name="isFinal" value="0" type="radio" <#if menus.isFinal==0>checked</#if>/>是</td>     
+      </tr>
+    </table>
+
+    <p style="width:150px;margin-left:auto;margin-right:auto;">
+      <input type="submit" value="  提 交  " />
+    </p>
+  </form>
+  <table id="dgzl"></table>
+
+  <script type="text/javascript">
+ 			// var userID=${users.userID};
+			(function() {
+				f_edit_init();
+			})();
+
+			function f_edit_init() {
+				$("#f_edit").validate({
+					rules : {//设置验证规则
+						
+						"menuName" : { //input标签定义的name属性值
+							required : true
+						}
+					},
+					messages : {//设置错误信息
+						
+						"menuName" : { //input标签定义的name属性值
+							required : "角色名不能为空"
+						}
+						
+					},
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'right',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						f_add_submit(form);
+					}
+				});
+			}
+
+			function f_add_submit(form) {
+				$(form).ajaxSubmit({				
+					url : '/ajax/bms/menu/editmenu',
+					type : "put",
+					success : function(r) {
+						if (r.result) {
+							$.messager.alert('系统提示', "修改成功！", 'info');
+							closeW(WEditId);
+							$dg.datagrid('reload');
+						} else {
+							$.messager.alert('系统提示', r.ms, 'warn');
+						}
+					}
+				});
+			}
+		</script>
+</body>
+</html>

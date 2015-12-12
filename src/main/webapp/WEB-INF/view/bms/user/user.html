@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>用户管理</title>
+<#include "bms/common/head_include.html">
+</head>
+
+<body>
+
+    <div class="easyui-panel" style="padding: 10px; background: #fafafa;">
+    <form id="f_search" method="get">
+      登录名: <input name="name" class="easyui-textbox" id="userName"> <a
+        href="javascript: void(0);" onclick="f_search()"
+        class="easyui-linkbutton" iconCls="icon-search">查询</a>
+
+   <!--  <a
+        href="javascript: void(0);" id="Exist" onclick="Exist_search()"
+        class="easyui-linkbutton" value ="0" iconCls="icon-search">已存在人员查询</a>
+      
+    <a
+        href="javascript: void(0);" id="Not_Exist" onclick="Not_Exist_search()"
+        class="easyui-linkbutton" value ="1" iconCls="icon-search">已离职人员查询</a> -->
+
+    </form>
+   
+  </div>
+  
+  <div class="easyui-panel" style="padding: 5px; background: #fafafa;">
+    <a href="javascript: openWAdd()" class="easyui-linkbutton"
+      iconCls="icon-add" plain="true">添加</a> 
+  </div>
+
+
+ <table id="dg"></table>
+  <script type="text/javascript">
+			var $dg = $('#dg');//表格 列表
+			var WAddId = "WAdd";//窗口id 添加
+			var WEditId = "WEdit";//窗口id 修改
+
+			$dg.datagrid({
+						url : '/ajax/bms/user/list',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : false
+						} ] ],
+						queryParams: {
+							userName: ''/* ,
+							isExist:'' */
+						},						
+						columns : [ [
+								{
+									field : 'userID',
+									title : '用户ID',
+									width:120
+								},
+								{
+									field : 'userName',
+									title : '登录名',
+									width:120
+								},
+								{
+									field : 'roleName',
+									title : '角色名称',
+									width:120
+								},
+								{
+									field : 'email',
+									title : '邮箱',
+									width:100
+								},
+								{
+									field : 'telephone',
+									title : '电话',
+									width:100
+								},
+								{
+									field : 'realName',
+									title : '真实姓名',
+									width:100
+								},
+								{
+									field : 'sex',
+									title : '性别',
+									width:100,
+									formatter:function(value, row, index){
+										if(value==1){
+											return "男";										
+										}else{
+											return "女";
+										}										
+									}	
+									
+								},
+								/* {
+									field : 'headPortrait',
+									title : '头像',
+									width:100
+								},
+								{
+									field : 'birthday',
+									title : '生日',
+									width:100
+								},  */
+								/* {
+									field : 'isExist',
+									title : '用户是否存在',
+									width:120,
+									formatter:function(value, row, index){
+										if(value==1){
+											return "不存在";										
+										}else{
+											return "存在";
+										}										
+									}										
+								}, */
+								{
+									field : 'operate',
+									title : '操作',
+									width : 120,
+									formatter : function(value, row, index) {									
+										return '<a href="javascript:openWEdit('
+												+ row.userID
+												+ ')" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>'
+												+ '&nbsp;<a href="javascript:del('
+												+ row.userID
+												+ ')" class="easyui-linkbutton" data-options="iconCls:\'icon-remove\'" plain="true">删除</a>';									
+									}
+								}								
+								] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+
+			function f_search() {				
+				$dg.datagrid("load", {
+					userName : $("#userName").val()
+				});				
+			}
+			
+			function openWAdd() {
+				
+				var wUrl = "/bms/user/adduser";
+				openW(WAddId, "用户添加", wUrl, "950px");
+			}
+			
+			function openWEdit(userID) {
+				var wUrl = "/bms/user/"+userID+"/edituser";
+				openW(WEditId, "用户编辑", wUrl, "600px");
+			}  
+			
+			function del(id) {
+				$.messager.confirm('系统提示', '确定要删除此条数据吗?', function(r) {
+					if (r) {
+						var ids = [];
+						ids.push(id);
+						ajaxDel(ids);
+					}
+				});
+			}
+			
+			function ajaxDel(ids) {
+				$.ajax({
+					url : '/ajax/bms/user/delete',
+					type : 'put',
+					data : {
+						ids : ids
+					},
+					success : function(r) {
+						if (r.result) {
+							$.messager.alert('系统提示', "已删除！", 'info');
+							closeW(WEditId);
+							$('#dg').datagrid('reload');
+						} else {
+							$.messager.alert('系统提示', r.ms, 'warn');
+						}
+					}
+				});
+			}
+			
+		/* 	function Exist_search(1){
+				alert("存在");
+				$dg.datagrid("load", {
+					isExist : $("#Exist").val()
+				});		
+				alert(isExist);
+			}
+			function Not_Exist_search(0){
+				alert("已离职");
+				$dg.datagrid("load", {
+					isExist : $("#Not_Exist").val()
+				});		
+			} */
+		</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>我的</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+var membersID = ${crrrentMember.membersID};
+function zc_index(){
+	$.ajax({
+		url:"/help/list",
+		data:"params={memberID:"+membersID+",page:"+1+",size:"+10000+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			var _html = '';
+			if(data.data.totalCount!=0){
+				var arrs = data.data.list;
+				for(var i=0;i<arrs.length;i++){
+					_html+='<li>';
+					_html+='<div class="index_li_inner">';
+					_html+='<div class="index_li_div">';
+					_html+='<div class="index_li_div_a">';
+					_html+='<h3><a href="/helpPage/crowdfundDetail/'+arrs[i].crowdfundID+'"><img src="'+arrs[i].crowdfundPath+'" /></a></h3>';
+					_html+='<h4><em><img src="/images/icon_hot_07.png" /><font>'+((arrs[i].crowdfundaccTimes)*1+(arrs[i].crowdfundTimes)*1)+'</font></em><strong><a href="javascript:void(0);"><img src="/images/icon_add_07.png" />'+arrs[i].crowdfundTitle+'</a></strong><div class="clear"></div></h4>';
+					_html+='</div>';
+					_html+='<div class="index_li_div_b"></div>';
+					_html+='<div class="index_li_div_c"></div>';
+					_html+='</div>';
+					_html+='<div class="index_li_cancel" onclick="deleteCrowdfund('+arrs[i].crowdfundID+',this);">';
+					_html+='<a href="javascript:void(0);" style="padding-top:20%;"><img src="/images/x_a_07.png" />删除</a>';
+					_html+='</div>';
+					_html+='</div>';
+					_html+='<h5></h5>';
+					_html+='</li>';
+				}
+			}
+			$("#crowdfundList").html(_html);
+			$(".index_ul li:last").find("h5").hide();
+			var fH = $(".footer_tianjia").height();
+			var fH2 = $("#footer").outerHeight();
+			$("#footer li:not(:eq(2))").height(fH);
+			$(".footer_zw").height(fH2);
+			$(".index_li_div").each(function(){
+				var dAh = $(this).find(".index_li_div_a").outerHeight();
+				$(this).find(".index_li_div_b,.index_li_div_c").height(dAh);
+				var dBw = $(this).find(".index_li_div_b").width();
+				$(this).find(".index_li_div_b").css("margin-left",-dBw/2);
+				var dCw = $(this).find(".index_li_div_c").width();
+				$(this).find(".index_li_div_c").css("margin-left",-dCw/2);
+			});
+			
+			
+			$(".js_btn_bjgz").click(function(){
+				$(".index_li_div").each(function(){
+					var tiH = $(this).outerHeight();	
+					var tiW = $(this).width();	
+					$(this).siblings(".index_li_cancel").height(tiH).width(tiW);	
+				});
+				if($(".index_li_cancel").is(":hidden")){
+					$(".index_li_cancel").show();	
+					$("#bjgz_image").attr("src","/images/icon_btn_a_04.png");
+				}else{
+					$(".index_li_cancel").hide();	
+					$("#bjgz_image").attr("src","/images/icon_btn_b_03.png");
+				}
+			});
+			$("body").not($(".index_li_cancel")).not($(".index_li_div")).click(function(e){
+				if(e.target.tagName.toLowerCase()=='li'){
+					$(".index_li_cancel").hide();
+					$("#bjgz_image").attr("src","/images/icon_btn_b_03.png");
+				}
+			});
+			$(document).click(function(e){
+				if(e.target.tagName.toLowerCase()=='html'){
+					$(".index_li_cancel").hide();
+					$("#bjgz_image").attr("src","/images/icon_btn_b_03.png");
+				}
+			});
+	    },
+	    error:function(){
+	    	
+	    }
+	});
+};
+
+function deleteCrowdfund(crowdfundID,obj){
+	$.ajax({
+		url:"/help/delete",
+		data:"params={crowdfundID:"+crowdfundID+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			if(data.data.msg=="true"){
+				$(obj).parent().parent("li").remove();	
+			}else{
+				alert("已有助力，不能删除")
+			}
+	    },
+	    error:function(){
+	    	alert("删除异常");
+	    }
+	});
+}
+</script>
+</head>
+
+<body onload="zc_index()">
+
+<div class="index_ul">
+	<ul id="crowdfundList">
+	</ul>
+</div>
+
+<div class="footer_zw"></div>
+<div id="footer"><#include "common/footer.html"></div>
+<script type="text/javascript" src="/js/common/footer.js"></script>
+<div class="btn_a js_btn_bjgz"><a href="###"><img src="/images/icon_btn_b_03.png" id="bjgz_image" /></a></div>
+</body>
+</html>

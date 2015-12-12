@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>玩赚世界</title>
+<link href="/css/style_v2.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript" src="/js/toast.js"></script>
+<style>
+.ib_bo dt a {
+  font-size: 4.5vw;
+}
+.ib_bo dd a {
+  font-size: 4vw;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	zc_index();
+});
+var page=1;
+var _result = "";
+$(window).scroll(function(){
+	　　var scrollTop = $(this).scrollTop();
+	　　var scrollHeight = $(document).height();
+	　　var windowHeight = $(this).height();
+	　　if(scrollTop + windowHeight == scrollHeight){
+	　　　　page=page+1;
+	     $("#loading").show();
+		 zc_index();
+	　　}
+	});
+function zc_index(){
+	$.ajax({
+		url:"/CrowdfundInquiryApi/crowdfundList",
+		data:"params={page:"+page+",size:"+20+"}",
+		type:"POST",
+		dataType:"json",
+		beforeSend:function(){
+		},
+		success: function(data){
+			$("#loading").hide();
+			if(data.data.totalCount!=0){
+				var arrs = data.data.list;
+				for(var i=0;i<arrs.length;i++){
+					_result+='<li>';
+					_result+='<h2><span><a href="javascript:void(0)"><img src="'+arrs[i].membersImage+'" class="fxb_ph" />'+arrs[i].membersNickName+'</a></span><strong>'+getDateDiff(arrs[i].createTime)+'</strong><div class="clear"></div></h2>';
+					if(arrs[i].crowdfundType==0){//心愿
+						_result+='<p class="preline"><a href="/helpPage/wishDetail/'+arrs[i].crowdfundID+'">'+arrs[i].crowdfundDesc+'</a></p>';
+					}
+					if(arrs[i].crowdfundType==1){//足迹
+						_result+='<p class="preline"><a href="/helpPage/tripDetail/'+arrs[i].crowdfundID+'">'+arrs[i].crowdfundDesc+'</a></p>';
+					}
+					_result+='<h3>';
+					if(arrs[i].crowdfundType==0){//心愿
+						_result+='<a class="list_image fxb_img" href="/helpPage/wishDetail/'+arrs[i].crowdfundID+'">';
+					}
+					if(arrs[i].crowdfundType==1){//足迹
+						_result+='<a class="list_image fxb_img" href="/helpPage/tripDetail/'+arrs[i].crowdfundID+'">';
+					}
+					_result+='<img  src="'+arrs[i].crowdfundPath+'" />';
+					_result+='</a>';
+					_result+='<span>';
+					if(arrs[i].crowdfundType==0){//心愿
+						_result+='<i style="background-image:url(/images/icon_10_08.png);"></i>';
+					}
+					if(arrs[i].crowdfundType==1){//足迹
+						_result+='<i style="background-image:url(/images/icon_10_10.png);"></i>';
+					}
+					_result+='</span>';
+					_result+='<strong><small><em></em>'+arrs[i].cfacount+'<em style="background-image:url(/images/icon_11_17.png);margin-left:10%;"></em>'+arrs[i].crowdfundaccTimes+'</small><big><em style="background-image:url(/images/icon_11_19.png);"></em>'+(arrs[i].crowdfundAccount/100)+' 元</big><div class="clear"></div></strong>';
+					_result+='</h3>';
+				    _result+='</li>';
+				}
+			}
+			$(".a_j ul").html(_result);
+			$(".fxb_ph").height($(".fxb_ph").width());
+			$(".fxb_img").height(($(".fxb_img").width()/3)*2);
+			$(".fxb_img").each(function(){//循环每个class
+				var tAsrc = $(this).find("img").attr("src");
+				var z_temp = $(this);
+				$(this).find("img").attr("src",tAsrc).load(function() { 
+					var fxbWidthA = z_temp.width();//获取当前的宽度
+					var fxbHeightA = z_temp.height();//获取当前的高度
+					var fxbWidth = z_temp.find("img").width();//获取当前下img的宽度
+					var fxbHeight = z_temp.find("img").height();//获取当前下img的高度
+					if( fxbWidth/fxbWidthA > fxbHeight/fxbHeightA ){
+						$(this).height(fxbHeightA);
+						$(this).css('marginLeft', -($(this).width()-fxbWidthA)/2);
+					}else{
+						$(this).width(fxbWidthA);
+						$(this).css('marginTop', -($(this).height()-fxbHeightA)/2);
+					}
+				}); 
+			});
+			$(".a_j h3 span i").each(function(){
+				$(this).height($(this).width());
+			});
+			$(".a_j h3 strong em").each(function(){
+				$(this).height($(this).width());
+			});
+	    },
+	    error:function(){
+	    	
+	    }
+	});
+};
+</script>
+</head>
+<body  style="background-color: #fbfbfb;">
+<div class="a_j">
+	<ul>
+	</ul>
+	<div style="display: none;text-align: center;" id="loading"><img src="/images/loading.gif" width="20px;"/></div>
+</div>
+</body>
+</html>

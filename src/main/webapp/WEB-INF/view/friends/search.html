@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+<meta name="apple-touch-fullscreen" content="yes"/> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>搜索</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+function common(){
+	var bH = $(".back").height();
+	$(".title").height(bH).css("line-height",bH+"px");
+	var tIh = $(".talk").find("img").height();
+	$(".talk").css("padding-top",(bH-tIh)/2+"px");
+	$(".talk").height(bH-(bH-tIh)/2);
+	var tH = $(".search_top").outerHeight();
+	$(".search_input").css("top",tH);
+	var sH = $(".search_input").outerHeight();
+	$(".search_top_zw").height(tH+sH);
+	
+	var tH = $(".talk_footer").outerHeight();
+	$(".talk_footer_zw").height(tH);
+};
+</script>
+</head>
+
+<body onload="common()">
+<div class="search_top_zw"></div>
+<div class="search_top">
+	<div class="back left"><a href="###"><img src="/images/search_back_03.png" />返回</a></div>
+	<div class="title left">搜索</div>
+	<div class="talk left"><!--<a href="###"><img src="/images/icon_talk_06.png" /></a>--></div>
+	<div class="clear"></div>
+</div>
+
+<div class="search_input">
+	<h2>
+		<span><img src="/images/icon_search_a_07.png" /></span>
+		<font><input type="text" placeholder="搜索"/></font>
+		<strong><a href="###"><img src="/images/icon_search_b_10.png" /></a></strong>
+		<div class="clear"></div>
+	</h2>
+</div>
+
+<div class="search_all">
+	<img src="/images/search_bg_15.png" />
+</div>
+</body>
+</html>

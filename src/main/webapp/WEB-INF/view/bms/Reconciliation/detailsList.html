@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——对账总明细</title>
+<#include "bms/common/head_include.html">
+<script type="text/javascript" src="/plugin/easyui/datagrid-dnd.js"></script>
+</head>
+
+<body>
+  <div class="easyui-panel" style="padding: 10px; background: #fafafa;">
+    <form id="f_search" method="get">
+      <table>
+          <tr>
+               <td>日期:</td>
+               <td>
+                   <select name="searchTimeType" id="searchTimeType"  style="width:80px;" onChange="timeType();">
+                       <option value="0">请选择</option>
+			           <option value="1">当日</option>
+			           <option value="2">上周</option>
+			           <option value="3">上月</option>
+			           <option value="4">自定义</option>
+	         	   </select></td>
+               <td><input name="timeStart" id="timeStart" class="easyui-datebox"></td>
+               <td><input name="timeEnd" id="timeEnd" class="easyui-datebox"></td>
+               <td> 
+                    <a href="javascript: void(0);" onclick="f_search()" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                    <a href="javascript: void(0);" onclick="detailsListExcelPort()" class="easyui-linkbutton" iconCls="icon-redo">导出EXECL</a>
+               </td>
+          </tr>
+      </table>
+    </form>
+  </div>
+  <table id="dg"></table>
+  <script type="text/javascript">
+			var $dg = $('#dg');//表格 列表
+			var WAddId = "WAdd";//窗口id 添加
+			var WEditId = "WEdit";//窗口id 修改
+			var countAccount=0.00;   //余额
+			$dg.datagrid({
+						url : '/ajax/bms/Reconciliation/detailsList',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : false
+						} ] ],
+						queryParams: {
+							orderPayedTime:''
+						},
+						idField : 'id',//标识字段
+						columns : [ [
+								{
+									field : 'createTime',
+									title : '日期',
+									width:150
+								},
+								{
+									field : 'detailsAccount',
+									title : '收入/支出',
+									width:200,
+									formatter : function(value,row,index) {
+										if(row.detailsType==1){
+											return "+"+formatFloat(row.detailsAccount);
+										}if(row.detailsType==2){
+											return formatFloat(row.detailsAccount);
+										}
+										
+									}
+								},
+								{
+									field : 'balance',
+									title : '余额',
+									width:200,
+									formatter : function(value,row,index) {
+										return formatFloat(row.balance);	
+									}
+								}] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+
+			function f_search() {
+				var timeStart=$('#timeStart').datebox('getValue');
+				var timeEnd=$('#timeEnd').datebox('getValue');
+				var orderPayedTime;
+				if(timeStart=='' || timeEnd==''){
+					orderPayedTime="";
+				}else{
+					orderPayedTime=timeStart+" 00:00:00"+","+timeEnd+" 23:59:59";
+				}
+				$dg.datagrid("load", {
+					orderPayedTime : orderPayedTime
+				});
+			}
+			
+			
+			
+			function timeType(){
+				var searchTimeType=$("#searchTimeType  option:selected").val();
+				var year=new Date().getFullYear();
+			    var month=new Date().getMonth()+1;
+			    var day=new Date().getDate();
+			    var thisWeekStart; //本周周一的时间
+				if(searchTimeType==1){   //当日
+					$('#timeStart').datebox('setValue','');	// 设置日期输入框的值
+					$('#timeEnd').datebox('setValue','');      // 设置日期输入框的值
+					$('#timeStart').datebox('setValue',new Date().toLocaleString());	// 设置日期输入框的值
+					$('#timeEnd').datebox('setValue',new Date().toLocaleString());      // 设置日期输入框的值
+				}
+				if(searchTimeType==2){ //获得上周时间
+					$('#timeStart').datebox('setValue','');	// 设置日期输入框的值
+					$('#timeEnd').datebox('setValue','');      // 设置日期输入框的值
+					if(new Date().getDay()==0){  //周天的情况；
+		                thisWeekStart = (new Date(year+'/'+month+'/'+day)).getTime()-((new Date().getDay())+6) * 86400000;
+		            }else{
+		                thisWeekStart = (new Date(year+'/'+month+'/'+day)).getTime()-((new Date().getDay())-1) * 86400000;
+		            }
+			        var prevWeekStart = thisWeekStart - 7 * 86400000;//上周周一的时间
+			        var prevWeekEnd = thisWeekStart - 1 * 86400000;//上周周日的时间
+			        var prevweekStartDate=new Date(prevWeekStart).format("yyyy-MM-dd");
+			        var prevweekEndDate=new Date(prevWeekEnd).format("yyyy-MM-dd");      
+					$('#timeStart').datebox('setValue',prevweekStartDate);	// 设置日期输入框的值
+					$('#timeEnd').datebox('setValue',prevweekEndDate);      // 设置日期输入框的值   */
+				}
+				if(searchTimeType==3){  //上月
+					//获得上月时间
+			        var currentYear=new Date().getFullYear();
+			        var currentMonth=new Date().getMonth();
+			        var prevCurrentYear=0,prevCurrentMonth=0;
+			        if(currentMonth==0){
+			            prevCurrentYear=currentYear-1;
+			            prevCurrentMonth=12;
+			        }else{
+			            prevCurrentYear=currentYear;
+			            prevCurrentMonth=currentMonth-1;
+			        }
+			        var prevmonthLastday=(new Date(currentYear,currentMonth,1)).getTime()-86400000;  
+			        var prevmonthStartDate= new Date(prevCurrentYear,prevCurrentMonth,1).format("yyyy-MM-dd");    
+			        var prevmonthEndDate=new Date(prevmonthLastday).format("yyyy-MM-dd");
+					$('#timeStart').datebox('setValue',prevmonthStartDate);	// 设置日期输入框的值
+					$('#timeEnd').datebox('setValue',prevmonthEndDate);      // 设置日期输入框的值 */
+				}
+				if(searchTimeType==4){  //自定义
+					$('#timeStart').datebox('setValue','');	// 设置日期输入框的值
+					$('#timeEnd').datebox('setValue','');      // 设置日期输入框的值
+				}
+				
+			}
+			
+			
+			function formatFloat(tempData){
+				var obj = tempData/100;
+				return parseFloat(obj.toFixed(2));
+			}
+			
+			
+			
+			function detailsListExcelPort(){
+				var timeStart=$('#timeStart').datebox('getValue');
+				var timeEnd=$('#timeEnd').datebox('getValue');
+				var orderPayedTime;
+				if(timeStart=='' || timeEnd==''){
+					orderPayedTime="";
+				}else{
+					orderPayedTime=timeStart+" 00:00:00"+","+timeEnd+" 23:59:59";
+				}
+				var url="/ajax/bms/Reconciliation/detailsListExcelPort?orderPayedTime="+orderPayedTime;
+			    window.open(url);
+			}
+		</script>
+</body>
+</html>

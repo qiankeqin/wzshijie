@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>拉钩去——后台添加</title>
+</head>
+<body>
+
+  <form id="f_add" method="post">
+    <table width="100%">
+      <tr>
+        <td align="right" >名称<font color="red">*</font>:</td>
+        <td><input name="description" style="width:300px;"/></td>
+      </tr>
+      <tr>
+        <td align="right">哪好玩ID<font color="red">*</font>:</td>
+        <td align="left"><input id="funID" name="funID" style="width:150px;"/><input id="textValue" type="text" readonly="readonly" style="width:150px;"></td>
+      </tr>
+      <tr>
+        <td align="right">哪好玩推荐图<font color="red">*</font>:</td>
+        <td  align="left"><input type="file" name="file_upload" id="file_upload" /><font color="red" style="margin-left:10px;"></font></td>
+      </tr>
+      <tr>
+      	<td></td>
+         <td id="show_upload" style="position: relative;"  align="left"></td>
+      </tr>
+    </table>
+    <p style="width:150px;margin-left:auto;margin-right:auto;">
+      <input type="submit" value="提交" />
+    </p>
+  </form>
+  <script type="text/javascript">
+			(function() {
+				funCarousel_upload();
+				f_add_init();
+				$('#funID').combogrid({    
+				    panelWidth:450,  
+				    mode: 'remote', 
+				    idField:'newsId',    
+				    textField:'newsTitle',
+				    pagination : true,
+					fitColumns : true,
+					required : true,
+					rownumbers : true,
+					pageSize : 5,
+					pageList : [ 5, 10 ],
+				    url:'/ajax/bms/news/list',  
+				    columns:[[    
+				        {field:'newsId',title:'ID',width:250},    
+				        {field:'newsTitle',title:'名称',width:200}
+				    ]],onSelect:function(rowIndex, rowData){
+				    	$('#textValue').val(rowData.newsTitle);
+				    }      
+				}); 
+			})();
+			function funCarousel_upload(){
+				$("#file_upload").uploadify(
+						{
+							//上传使用的 Flash
+							'swf' : '/plugin/uploadify/uploadify.swf',
+							//后台处理程序的相对路径。
+							'uploader' : '/ajax/bms/funCarousel/upload',
+							'method' : 'get',
+							//是否自动上传
+							'auto' : true,
+							// 按钮的宽度
+							'width' : 60,
+							// 按钮的高度
+							'height' : 23,
+							// 按钮上的文字
+							'buttonText' : "上传",
+							// 按钮的鼠标图标
+							'buttonCursor' : 'hand',
+							// 上传参数名称
+							'fileObjName' : 'Filedata',
+							// 两个配套使用
+							// 扩展名
+							'fileTypeExts' : "*.jpg;*.png",
+							// 文件说明
+							'fileTypeDesc' : "请选择 jpg png 文件",
+							//限制上传文件的大小
+							'fileSizeLimit' : '4000KB',
+							'progressData' : 'speed',
+							'removeTimeout' : 0.01,
+				           'onInit':function(){
+								$("#file_upload").css({"display":"inline-block"});
+								$("#file_upload-queue").css({"display":"inline-block"});
+							},
+							 //上传成功
+							'onUploadSuccess':function(file, data, response) {
+							    	var obj = JSON.parse(data);
+							    	var recommendImg=obj.data;
+								    $("#show_upload").html("<span style='display: inline-block;width: 150px;'><a style='position:absolute;height:16px;width:16px;'  onclick='delImg(this)' class='panel-tool-close'></a><label><input type='hidden' name='recommendImg'  value="+recommendImg+"><img src='"+recommendImg+"' width='148' height='198' /></label></span>");
+							  }
+				         } 
+						);
+			}
+			
+			function f_add_init() {
+				$("#f_add").validate({
+					rules : {//设置验证规则
+						"description" : { //精品游banner名字
+							required : true
+						}
+					},
+					messages : {//设置错误信息
+						"description" : {
+							required : "请输入名称"
+						}
+					},
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'right',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						f_add_submit(form);
+					}
+				});
+			}
+
+			function f_add_submit(form) {
+				$(form).find("input[type='submit']").attr("disabled","disabled").val("提交中...");
+				$(form).ajaxSubmit({
+					url : '/ajax/bms/funCarousel/add',
+					type : "post",
+					dataType : "json",
+					success : function(data) {
+						 $(form).find("input[type='submit']").attr("disabled","disabled").val("提交中..."); 
+						if (data.result==true) {
+							$.messager.alert('系统提示', "添加成功！", 'info');
+							closeW(WAddId);
+							$dg.datagrid('reload');
+						} else {
+							$.messager.alert('系统提示', data.message, 'warn');
+						}
+					}
+				});
+			}
+				
+		</script>
+</body>
+</html>

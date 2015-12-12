@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>玩赚世界——用户打赏</title>
+<#include "bms/common/head_include.html">
+<script type="text/javascript" src="/plugin/easyui/datagrid-dnd.js"></script>
+</head>
+
+<body>
+  <div class="easyui-panel" style="padding: 10px; background: #fafafa;">
+    <form id="f_search" method="get">
+      <table>
+          <tr>
+               <td>手机号:</td>
+               <td><input name="membersPhone" id="membersPhone"></td>
+               <td>昵称:<input name="membersNickName" id="membersNickName"></td>
+               <td> 
+                    <a href="javascript: void(0);" onclick="f_search()" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+               </td>
+          </tr>
+      </table>
+    </form>
+  </div>
+  <table id="dg"></table>
+  <script type="text/javascript">
+			var $dg = $('#dg');//表格 列表
+			var WAddId = "WAdd";//窗口id 添加
+			var WEditId = "WEdit";//窗口id 修改
+			$dg.datagrid({
+						url : '/ajax/bms/Reconciliation/MembersMarkList',
+						nowrap : false, //True 就会把数据显示在一行里。
+						striped : true, //True 就把行条纹化。（即奇偶行使用不同背景色）
+						collapsible : true,
+						fitColumns : true,
+						searchbox : true,
+						pagination : true,//True 就会在 datagrid 的底部显示分页栏
+						pageSize : 20,
+						frozenColumns : [ [ {//和列的特性一样，但是这些列将被冻结在左边。
+							field : 'ck',
+							checkbox : false
+						} ] ],
+						queryParams: {
+							membersPhone: '',
+							membersNickName:''
+						},
+						idField : 'id',//标识字段
+						columns : [ [
+								{
+									field : 'membersID',
+									title : '用户ID',
+									width:100
+								},
+								{
+									field : 'membersPhone',
+									title : '用户手机号',
+									width:250
+								},
+								{
+									field : 'membersNickName',
+									title : '用户昵称',
+									width:200
+								},
+								{
+									field : 'sumPrice',
+									title : '打赏总金额',
+									width:200,
+									formatter : function(value, row, index) {
+										return formatFloat(row.sumPrice);
+									}
+								},	
+								{
+									field : 'membersSex',
+									title : '性别',
+									width:200,
+									formatter : function(value, row, index) {
+										if(value==0){
+											return "女";
+										}if(value==1){
+											return "男";
+										}
+									}
+								},
+								{
+									field : 'identifyState',
+									title : '身份认证',
+									width:250,
+									formatter : function(value, row, index) {
+										if(value==0){
+											return "未认证";
+										}if(value==1){
+											return "待审核";
+										}if(value==2){
+											return "认证用户";
+										}if(value==3){
+											return "审核失败";
+										}
+									}
+								},
+								{
+									field : 'abc',
+									title : '操作',
+									width:200,
+									formatter : function(value, row, index) {
+										return '<a href="javascript:openMark('
+										        + row.membersID
+										        + ')" class="easyui-linkbutton" iconCls="icon-edit" plain="true">打赏详情</a>';
+									}
+								}] ],
+						onLoadSuccess : function() {
+							$dg.datagrid("clearSelections");
+						}
+					});
+
+			function f_search() {
+			
+				$dg.datagrid("load", {
+					membersPhone : $("#membersPhone").val(),
+					membersNickName : $("#membersNickName").val()
+				});
+			}
+			
+			function formatFloat(tempData){
+				var obj = tempData/100;
+				return parseFloat(obj.toFixed(2));
+			}
+			
+			function openMark(membersID) {
+				var wUrl = "/bms/Reconciliation/"+membersID+"/MembersMarkDetails";
+				openW(WAddId, "打赏详情", wUrl, "950px");
+			}
+		</script>
+</body>
+</html>

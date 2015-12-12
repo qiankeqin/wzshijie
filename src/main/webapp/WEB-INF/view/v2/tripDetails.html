@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>[足记]·在足记里点指成金</title>
+<link href="/css/style_v2.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<script type="text/javascript" src="/js/toast.js"></script>
+<script type="text/javascript">
+var urls = [];
+var currentUrl="";
+var imageCount = 0;
+var shareTime;
+$(function(){
+	onload();
+});
+var crowdfundMembersID;
+function onload(){
+	$.ajax({
+		url:"/CrowdfundInquiryApi/crowdfundDetail",
+		data:"params={crowdfundID:"+${id}+",crowdfundType:1,membersID:0}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			if(data.result==true){
+				crowdfundMembersID = data.data.membersID;
+				shareTime = data.data.createTime;
+				$("#membersImage").attr("src",data.data.membersImage);
+				$("#membersNickName").html(data.data.membersNickName);
+				$("#createTime").html(getDateDiff(data.data.createTime));
+				$("#crowdfundTitle").html(data.data.crowdfundTitle);
+				if(data.data.detail.length>0){
+					imageCount = data.data.detail.length;
+					currentUrl = data.data.detail[0].trackRecordImage;
+					var _html = "";
+					for(var i=0;i<data.data.detail.length;i++){
+						_html+='<li>';
+						_html+='<dl>';
+						_html+='<dd class="preline">'+data.data.detail[i].trackRecordTitle+'</dd>';
+						_html+='</dl>';
+						_html+='<h3><img src="'+data.data.detail[i].trackRecordImage+'" /></h3><h4><span>'+data.data.detail[i].trackRecordLocation+'</span><strong>'+formatTimeFour(data.data.detail[i].createTime)+'</strong></h4><div class="clear"></div>';
+						_html+='<div style="height:1px;background:#e8e8e8;margin:2% 0;"></div>';
+						_html+='</li>';
+					}
+					$("#detail").html(_html);
+				}
+			}else{
+				new Toast({context:$('body'),message:data.message}).show();
+			}
+			$("#membersImage").height($("#membersImage").width());
+			var h2H = $(".a_a h2").height();	
+			$(".a_a h2 strong,.a_a h2 em").css("line-height",h2H+"px");
+		},
+	    error:function(){
+	    	
+	    }
+	});
+	
+	$.ajax({
+		url:"/CrowdfundInquiryApi/crowdfundMarkList",
+		data:"params={crowdfundID:"+${id}+",page:1,size:1000}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			var _result =data.data.list;
+			var tempArr=[];
+			if(data.result==true){
+				var day = "";
+				var j=-1;
+				for(var i=0;i<_result.length;i++){
+					if(day!=_result[i].createTime.substring(0,10)){
+						var days={
+								day:"",
+								arr:[]
+						};
+						day = _result[i].createTime.substring(0,10);
+						days.day=_result[i].createTime.substring(0,10);
+						days.arr=[];
+						j++;
+						tempArr.push(days);
+					}
+					tempArr[j].arr.push(_result[i]);
+				}
+				var _html ="";
+				for(var k=0;k<tempArr.length;k++){
+					_html+='<h2><span>'+formatTimeLine(tempArr[k].day)+'</span></h2>';
+					_html+='<ul>';
+					if(tempArr[k].arr.length>0){
+						for(var p=0;p<tempArr[k].arr.length;p++){
+							_html+='<li class="shadow_1">';
+							_html+='<h3><span><a href="javascript:void(0)"><img src="'+tempArr[k].arr[p].membersImage+'" /></a></span><strong><big>'+tempArr[k].arr[p].membersNickName+'</big>'+getDateDiff(tempArr[k].arr[p].createTime)+'</strong><em>打赏了<i>'+formatFloat(tempArr[k].arr[p].crowdfundmarkAccount)+'</i>元</em><div class="clear"></div></h3>';
+							if(tempArr[k].arr[p].crowdfundmarkMessage!=null&&tempArr[k].arr[p].crowdfundmarkMessage!=""){
+								_html+='<h4><span>'+tempArr[k].arr[p].crowdfundmarkMessage+'</span><div class="clear"></div></h4>';
+							}else{
+								_html+='<h4><span>这家伙很懒,什么也没留下</span><div class="clear"></div></h4>';
+							}
+							if(tempArr[k].arr[p].replyList.length>0){
+								for(var m=0;m<tempArr[k].arr[p].replyList.length;m++){
+									if(crowdfundMembersID == tempArr[k].arr[p].replyList[m].membersID){
+										_html+='<h5><a href="javascript:void(0)">'+tempArr[k].arr[p].replyList[m].membersNickName+'</a><span>'+getDateDiff(tempArr[k].arr[p].replyList[m].createTime)+'</span><div class="clear"></div></h5>';
+										_html+='<h6>'+tempArr[k].arr[p].replyList[m].crowdfundReply+'</h6>';
+									}else{
+										_html+='<h5><a href="javascript:void(0)">'+tempArr[k].arr[p].replyList[m].membersNickName+'</a><span>'+getDateDiff(tempArr[k].arr[p].replyList[m].createTime)+'</span><div class="clear"></div></h5>';
+										_html+='<h6 style="color:#666">'+tempArr[k].arr[p].replyList[m].crowdfundReply+'</h6>';
+									}
+								}
+							}
+							_html+='</li>';
+						}
+					}
+					_html+='</ul>';
+				}
+				$(".a_d").html(_html);
+				$(".a_d h3 span img").height($(".a_d h3 span img").width());
+			}else{
+				new Toast({context:$('body'),message:data.message}).show();
+			}
+			var faH = $(".footer_a").height();
+			$(".footer_a_zw").height(faH);
+			$(window).scroll(function() {
+				var faH = $(".footer_a").height();
+				$(".footer_a_zw").height(faH);
+			});
+		},
+	    error:function(){
+	    	
+	    }
+	});
+	
+	
+}
+</script>
+</head>
+<body>
+<div class="a_a">
+	<h2><span><a href="javascript:void(0)"><img src="" id="membersImage"/></a></span><strong><a href="javascript:void(0)" id="membersNickName"></a></strong><em id="createTime"></em><div class="clear"></div></h2>
+	<dl>
+		<dt id="crowdfundTitle"></dt>
+	</dl>
+	<ul id="detail">
+	</ul>
+</div>
+<div class="a_d">
+</div>
+<div class="footer_a_zw"></div>
+<div class="footer_a">
+	<div class="footer_a_i">
+		<span><a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxc4240168d70dab2f&redirect_uri=http%3a%2f%2fwww.wzshijie.com%2ftoSkip&response_type=code&scope=snsapi_userinfo&state=v2-${id}#wechat_redirect"><img src="/images/shang.png" /></a></span>
+		<small><a href="/v2Index"><img src="/images/faxian_a.png" /><br/>发现</a></small>
+		<big><a href="/"><img src="/images/xiazai_a.png" /><br/>我也要去发</a></big>
+	</div>
+</div>
+<script type="text/javascript" src="/js/weixin/jweixin-1.0.0.js"></script>
+<script>
+wx.config({
+    debug: false,
+    appId: 'wxc4240168d70dab2f',
+    timestamp: ${timestamp},
+    nonceStr: '${nonceStr}',
+    signature: '${signature}',
+    jsApiList: [
+'checkJsApi',
+'onMenuShareTimeline',
+'onMenuShareAppMessage',
+'onMenuShareQQ',
+'onMenuShareWeibo',
+'hideMenuItems',
+'showMenuItems',
+'hideAllNonBaseMenuItem',
+'showAllNonBaseMenuItem',
+'translateVoice',
+'startRecord',
+'stopRecord',
+'onRecordEnd',
+'playVoice',
+'pauseVoice',
+'stopVoice',
+'uploadVoice',
+'downloadVoice',
+'chooseImage',
+'previewImage',
+'uploadImage',
+'downloadImage',
+'getNetworkType',
+'openLocation',
+'getLocation',
+'hideOptionMenu',
+'showOptionMenu',
+'closeWindow',
+'scanQRCode',
+'chooseWXPay',
+'openProductSpecificView',
+'addCard',
+'chooseCard',
+'openCard'
+    ]
+});
+wx.ready(function () {
+	var shareDesc = "共 ["+imageCount+"] 图\n"+$("#membersNickName").html()+"\n于"+formatTimeFive(shareTime);
+	//发送给朋友
+	  wx.onMenuShareAppMessage({
+	      title: "[足记]·来自玩赚世界的精彩推荐",
+	      desc: shareDesc,
+	      link: "http://www.wzshijie.com/helpPage/tripDetail/"+${id}*1,
+	      imgUrl:currentUrl
+	    });
+	  //分享到朋友圈
+	    wx.onMenuShareTimeline({
+	    	title: "[足记]·来自玩赚世界的精彩推荐",
+	        link: "http://www.wzshijie.com/helpPage/tripDetail/"+${id}*1,
+	        imgUrl:currentUrl
+	      });
+	  //分享到QQ
+	    wx.onMenuShareQQ({
+	    	 title: "[足记]·来自玩赚世界的精彩推荐",
+	    	 desc:shareDesc,
+		      link: "http://www.wzshijie.com",
+		      imgUrl:currentUrl
+	      });
+	  //分享到Weibo
+	    wx.onMenuShareWeibo({
+	    	  title: "[足记]·来自玩赚世界的精彩推荐",
+	    	  desc: shareDesc,
+		      link: "http://www.wzshijie.com",
+		      imgUrl:currentUrl
+	      });
+	  //分享到 QQ 空间
+	    wx.onMenuShareQZone({
+	    	title: "[足记]·来自玩赚世界的精彩推荐",
+	    	 desc: shareDesc,
+		      link: "http://www.wzshijie.com",
+		      imgUrl:currentUrl
+	      });
+});
+</script>
+</body>
+</html>

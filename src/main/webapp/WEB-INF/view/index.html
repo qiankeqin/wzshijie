@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>玩赚世界</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/common/time-format-util.js"></script>
+<style>
+.ib_bo dt a {
+  font-size: 4.5vw;
+}
+.ib_bo dd a {
+  font-size: 4vw;
+}
+</style>
+<script type="text/javascript">
+var page=1;
+var _result = "";
+$(window).scroll(function(){
+	　　var scrollTop = $(this).scrollTop();
+	　　var scrollHeight = $(document).height();
+	　　var windowHeight = $(this).height();
+	　　if(scrollTop + windowHeight == scrollHeight){
+	　　　　page=page+1;
+	     $("#loading").show();
+		 zc_index();
+	　　}
+	});
+function zc_index(){
+	$.ajax({
+		url:"/help/list",
+		data:"params={page:"+page+",size:"+20+"}",
+		type:"POST",
+		dataType:"json",
+		beforeSend:function(){
+		},
+		success: function(data){
+			$("#loading").hide();
+			if(data.data.totalCount!=0){
+				var arrs = data.data.list;
+				for(var i=0;i<arrs.length;i++){
+					_result+='<li>'
+					_result+='<div class="left ib_tx"><a><img src="'+arrs[i].membersImage+'" /></a></div>'
+					_result+='<div class="right ib_in">'
+					_result+='<h2><strong><i style="color:#ff8f4f">'+getDateDiff(arrs[i].createTime)+'</i></strong><span><a style="color:#4e4040">'+arrs[i].membersNickName+'</a></span></h2>'
+					_result+='<h5><img src="/images/icon_323_03.png" style="width:4%;margin-left:6%;"/></h5>'
+					_result+='<div class="ib_bo shadow_2">'
+					_result+='<dl>'
+					_result+='<dt><a href="/helpPage/crowdfundDetail/'+arrs[i].crowdfundID+'" style="color:#363030">'+arrs[i].crowdfundTitle+'</a></dt>'
+					_result+='<dd><a href="/helpPage/crowdfundDetail/'+arrs[i].crowdfundID+'" style="color:#666666">'+arrs[i].crowdfundDesc+'</a></dd>'
+					_result+='</dl>'
+					_result+='<h3><a href="/helpPage/crowdfundDetail/'+arrs[i].crowdfundID+'"><img src="'+arrs[i].crowdfundPath+'" /></a></h3>'
+					_result+='</div>'
+					_result+='<h4 style="border-bottom: 1px #eee solid;color:#999999"><strong><img src="/images/icon_321_06.png" style="width:7%;margin-right:1%;"/><font>'+arrs[i].cfacount+'</font><img src="/images/icon_322_08.png" style="width:7%;margin-right:1%;"/><font>'+((arrs[i].crowdfundaccTimes)*1+(arrs[i].crowdfundTimes)*1)+'</font></strong><span><img src="/images/icon_320_03.png" style="width:7%;margin-right:2%;"/>'+formatTimeStamp("yyyy年MM月dd日",arrs[i].endTime)+'</span><div class="clear"></div></h4>';
+					_result+='</div>'
+					_result+='<div class="clear"></div>'
+					_result+='</li>'
+				}
+			}
+			$(".ib_a ul").html(_result);
+	    },
+	    error:function(){
+	    	
+	    }
+	});
+};
+</script>
+</head>
+
+<body onload="zc_index()" style="background-color: #fbfbfb;">
+
+<div class="ib_a">
+	<ul>
+	</ul>
+	<div style="display: none;text-align: center;" id="loading"><img src="/images/loading.gif" width="20px;"/></div>
+</div>
+</body>
+</html>

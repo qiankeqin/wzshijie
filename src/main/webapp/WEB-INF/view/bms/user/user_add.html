@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>员工添加</title>
+</head>
+<body>
+
+<table id="f_add">
+			<tr>
+				<td align="right">登录姓名:</td>
+				<td align="left"><input name="userName" /></td>
+			</tr>
+			<tr>
+				<td align="right">用户密码:</td>
+				<td align="left"><input id="p0" name="password" type="password"/></td>
+			</tr>
+			<tr>
+				<td align="right">请再一次输入用户密码:</td>
+				<td align="left"><input id="p1" name="password" type="password"/></td>
+			</tr>
+			
+			<tr>
+				<td align="right">真实姓名:</td>
+				<td align="left"><input name="realName" /></td>
+			</tr>
+			
+			<tr>
+				<td align="right">邮箱:</td>
+				<td align="left"><input name="email" /></td>
+			</tr>
+			
+			<tr>
+				<td align="right">手机号:</td>
+				<td align="left"><input name="telephone" /></td>
+			</tr>
+			
+			<tr>
+				<td align="right">角色 :</td>
+		        <td align="left">
+		          <div>
+		              <div style="display: inline-block;">
+		               	<#list roles as item>
+			                <label><input id="roleID" name="roleID" type="checkbox" style="vertical-align: middle" value="${item.roleID}"   />${item.roleName}</label> 
+		        	    </#list>	
+		              </div>
+		           
+		          </div>
+		        </td>
+        </tr>		
+			<tr>
+				<td align="right">性别 :</td>
+       			 <td align="left"><input name="sex" value="1" checked="checked"
+         		 type="radio" /><span>男</span><input name="sex" value="2"
+         			 type="radio" /><span>女</span></td>
+			</tr>
+			
+			
+		</table>
+
+     <p style="margin-left:120px;">
+      <input type="button" value="提交" id="_btn_add"/>
+    </p>
+    
+  <script type="text/javascript">
+  	
+			$("#_btn_add").click(function(){
+				
+				if($("#f_add").find("input[name='userName']").val()==""){
+					$.messager.alert("系统提示", "姓名不能为空！", 'info');
+					return;
+				}
+				
+				/* if(($("#f_add")).find().val()){
+					alert("用户姓名必须是唯一的");	
+				} */
+				
+				if($("#f_add").find("input[name='password']").val()==""){
+					$.messager.alert("系统提示", "密码不能为空！", 'info');
+					return;
+				}
+				if($("#f_add").find("#p1").val()==""){
+					$.messager.alert("系统提示", "核对密码不能为空！", 'info');
+					return;
+				}
+				
+				if($("#f_add").find("#p0").val() != $("#f_add").find("#p1").val()){
+					$.messager.alert("系统提示", "输入密码不一致！", 'info');
+					$("#f_add").find("#p0").val("");
+					$("#f_add").find("#p1").val("");
+					return;
+				}
+				
+				if($("#f_add").find("input[name='realName']").val()==""){
+					$.messager.alert("系统提示", "真实姓名不能为空！", 'info');
+					return;
+				}
+				
+				if($("#f_add").find("input[name='email']").val()==""){
+					$.messager.alert("系统提示", "邮箱不能为空！", 'info');
+					return;
+				}
+				if(!isEmail($("#f_add").find("input[name='email']").val())){
+					$.messager.alert("系统提示", "邮箱格式不正确！", 'info');
+					return;
+				}
+				if($("#f_add").find("input[name='telephone']").val()==""){
+					$.messager.alert("系统提示", "手机号不能为空！", 'info');
+					return;
+				}
+				if(!isMobil($.trim($("#f_add").find("input[name='telephone']").val()))){
+					$.messager.alert("系统提示", "手机格式不正确！", 'info');
+					return;
+				}
+								
+				function isMobil(s) {
+				    return s.match(/^[1][3,4,5,8,7][0-9]{9}$/);
+				}
+				function isEmail(s) {
+				    return s.match(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+				}
+								
+				var roleIds = "";
+				var roleNames = "";
+				if($('#f_add input[type="checkbox"]:checked').length>0){
+					$('#f_add input[type="checkbox"]:checked').each(function(){ 						
+						roleIds += $(this).val()+",";
+						roleNames += $(this).parent().text()+",";
+					}); 
+				}else{
+					$.messager.alert("系统提示", "至少选一种角色！", 'info');
+					return;
+				}
+				
+												
+				$.ajax({
+					url : '/ajax/bms/user/add',
+					  type : 'post', 
+					/* type : 'get', */
+					/*  type : 'put', */
+					dataType : "json",
+					data : {
+						userName:$.trim($("#f_add").find("input[name='userName']").val()),					
+						password:$.trim($("#f_add").find("input[name='password']").val()),						
+						sex:$('#f_add input[type="radio"]:checked').val(),						
+					 	roleID:roleIds.substring(0,roleIds.length-1), 
+						roleName:roleNames.substring(0,roleNames.length-1),
+						realName:$("#f_add").find("input[name='realName']").val(),
+						telephone:$("#f_add").find("input[name='telephone']").val(),
+						email:$("#f_add").find("input[name='email']").val()
+					},					
+					success: function(data){
+						$.messager.alert('系统提示', "用户添加成功！", 'info');
+						closeW(WAddId);
+						$dg.datagrid('reload');
+				    },
+				    error:function(){
+				    	$.messager.alert('系统提示', "error！", 'info');
+			 	    }
+				});
+			});		
+	</script>
+	
+</body>
+</html>

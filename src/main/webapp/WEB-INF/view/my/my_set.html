@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+<meta name="apple-touch-fullscreen" content="yes" /> <!--  一会试验下是否有必要存在 -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="x-rim-auto-match" content="none"/>
+<title>我的设置</title>
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery.form.min.js"></script>
+<script type="text/javascript">
+var cityData = null;
+var membersID = ${crrrentMember.membersID};
+function common(){
+	$.ajax({
+		url:"/user/getUserinfo",
+		data:"params={membersID:"+membersID+"}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			if(data.data=="-1"){
+				alert("没有该用户");
+			}else if(data.data=="-2"){
+				alert("用户未登录");
+			}else{
+				var result = data.data.ms;
+				$("#membersImage").attr("src",result.membersImage);
+				$("#membersNickName").val(result.membersNickName);
+				$("#membersSex").val(result.membersSex);
+				if(result.membersImage){
+					$("#membersImage").attr("src",result.membersImage);
+				}else{
+					$("#membersImage").attr("src","/images/fxb.jpg");
+				}
+				
+				$.getJSON('/data/area.json', function(data) {
+					cityData = data.area1;
+					var _options1 = "";
+					 for( var p in data.area0 ){
+						 _options1+='<option value="'+p+'">'+data.area0[p]+'</option>';
+					 }
+					 $("#membersSheng").html(_options1);
+					
+					 if(result.membersLocation==null||result.membersLocation==""){
+						 var _options4 = "";
+						 _options4+='<option value="110100">北京市</option>';
+						 $("#membersLocation").html(_options4);
+						 return;
+					 }
+					var flag = false;
+					var key = null;
+					var key1 = null;//第二个下下拉框的value
+					var _options2 = "";
+					for( var p in data.area1 ){
+						if(flag==true){
+							for(var j=0;j<data.area1[key].length;j++){
+								 _options2+='<option value="'+data.area1[key][j][1]+'">'+data.area1[key][j][0]+'</option>';
+							}
+							$("#membersLocation").html(_options2);
+							 $("#membersSheng").val(key);
+							 $("#membersLocation").val(key1);
+							break;
+						}
+						for(var i=0;i<data.area1[p].length;i++){
+							if(result.membersLocation==data.area1[p][i][0]){
+								flag =true;
+								key = p;
+								key1 = data.area1[p][i][1]
+								break;
+							}
+						}
+						
+					 }
+				});
+			}
+	    }
+	});
+	var bH = $(".back").height();
+	$(".title").height(bH).css("line-height",bH+"px");
+	var tIh = $(".talk").find("img").height();
+	$(".talk").css("padding-top",(bH-tIh)/2+"px");
+	$(".talk").height(bH-(bH-tIh)/2);
+	var tH = $(".search_top").outerHeight();
+	$(".books_input").css("top",tH);
+	var sH = $(".books_input").outerHeight();
+	$(".search_top_zw").height(tH+sH);
+	
+	var tH = $(".talk_footer").outerHeight();
+	$(".talk_footer_zw").height(tH);
+	
+	$(".books_input input").keyup(function(){
+		var tV = $(this).val();
+		if(tV=="搜索"){
+			
+		}else{
+			$(this).siblings("img").hide();	
+		}
+		if(tV==""){
+			$(this).siblings("img").show();	
+		}
+	});
+	
+	
+	var wH = $(window).height();
+	//$("#slider,.slider-content,.slider-nav").css("height",wH-tH-sH-50);
+	
+	var fH = $(".footer_tianjia").height();
+	var fH2 = $("#footer").outerHeight();
+	$("#footer li:not(:eq(2))").height(fH);
+	$(".footer_zw").height(fH2);
+	$(".fileInputContainer").height($(".fileInputContainer").width());
+	$(".file").height($(".fileInputContainer").width());
+};
+//联动
+function shengChange(value){
+	var arrList = cityData[value];
+	var _options3 = "";
+	for(var k=0;k<arrList.length;k++){
+		 _options3+='<option value="'+arrList[k][1]+'">'+arrList[k][0]+'</option>';
+	}
+	$("#membersLocation").html(_options3);
+}
+
+function setSubmmit(){
+	var membersNickName =  $("#membersNickName").val();
+	var membersSex = $("#membersSex").val();
+	var membersLocation = $("#membersLocation option:selected").html();
+	var membersImage = $("#membersImage").attr("src");
+	$.ajax({
+		url:"/user/setinfo",
+		data:"params={membersID:"+membersID+",membersNickName:'"+membersNickName+"',membersImage:'"+membersImage+"',membersSex:"+membersSex+",membersLocation:'"+membersLocation+"'}",
+		type:"POST",
+		dataType:"json",
+		success: function(data){
+			
+	    }
+	});
+}
+//上传图片
+function uploadImage(){
+	$('#form1').ajaxSubmit(function(data){
+      $("#membersImage").attr("src",data.data[0]);
+    });
+    return false;
+}	
+
+</script>
+<style type="text/css">
+ .fileInputContainer{  
+	width:20%;
+	margin:0 auto 20px auto;
+	text-align:center;
+	display:block;
+	position: relative;
+}  
+.file{  
+	display:inline-block;
+	border-radius:50%;
+	width:100%;
+	cursor:pointer;  
+	background:none;
+	border:none;
+	opacity: 0;
+	z-index:2;
+	position: absolute;
+	top:0;
+	left:0;
+}   
+.my_set img {border-radius:50%;width:100%;height:100%;z-index:1;position: absolute;top:0;left:0;}
+</style>
+</head>
+
+<body onload="common()" onbeforeunload="setSubmmit()">
+<div class="my_set">
+<form action="/uploadfile/weixin" id="form1" name="form1" encType="multipart/form-data" method="post" >    
+	<div class="fileInputContainer"> 
+	    <img src="" id="membersImage"/>
+	    <input class="file" type="file" name="file" id="file" onChange = "uploadImage()"/> 	</div> 
+	<em style="margin-top:5px;">编辑头像</em>
+</form> 
+</div>
+
+<div class="my_ul_c">
+	<ul>
+		<li><i><img src="/images/my_set_a_03.png" /></i><span>昵称</span><s><input value="" placeholder="昵称" id="membersNickName"/></s><div class="clear"></div></li>
+		<li><i><img src="/images/my_set_b_03.png" /></i><span>性别</span><s><select id="membersSex"><option value="1">男</option><option value="0">女</option></select></s><div class="clear"></div></li>
+		<li><i><img src="/images/my_set_c_03.png" /></i><span>地区</span> <s><select id="membersSheng" style="width:40%;" onchange="shengChange(this.value);"></select><select id="membersLocation" style="width:40%;"></select></s><div class="clear"></div></li>
+	</ul>
+</div>
+<div class="footer_zw"></div>
+<div id="footer"><#include "common/footer.html"></div>
+<script type="text/javascript" src="/js/common/footer.js"></script>
+</body>
+</html>

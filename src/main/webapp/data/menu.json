@@ -1,0 +1,109 @@
+[
+{    
+    "id":1,    
+    "text":"首页",  
+    "state":"closed",  
+    "attributes":{    
+            "url":"/bms/crowdfund/list",    
+            "price":100    
+        }, 
+    "children":[{    
+        "text":"回收站",
+        "attributes":{    
+            "url":"/bms/crowdfund/crowdfundDel",    
+            "price":100    
+        },    
+        "checked":true   
+    }]       
+},{    
+    "text":"身份认证",    
+    "state":"closed",    
+    "children":[{    
+        "text":"未审核",
+        "attributes":{    
+            "url":"/bms/idCard/unaudit",    
+            "price":100    
+        }     
+    },{    
+        "text":"已审核",
+        "attributes":{    
+            "url":"/bms/idCard/audit",    
+            "price":100    
+        }       
+    }]    
+}
+,{    
+    "text":"提现审核",    
+    "state":"closed",    
+    "children":[{    
+        "text":"未处理",
+         "attributes":{    
+            "url":"/bms/wDetails/undisposed",    
+            "price":100    
+        }   
+    },{    
+        "text":"已处理",
+         "attributes":{    
+            "url":"/bms/wDetails/wDSuccessList",    
+            "price":100 
+            }          
+    }]    
+}
+,{    
+    "text":"后台助理",    
+    "state":"closed",    
+    "children":[{    
+        "text":"后台助理管理",
+         "attributes":{    
+            "url":"/bms/crowdfund/Bmslist",    
+            "price":100    
+        }   
+    }]    
+}
+,{    
+    "text":"用户管理",    
+    "state":"closed",    
+    "children":[{    
+        "text":"用户管理",
+         "attributes":{    
+            "url":"/bms/members/list",    
+            "price":100    
+        }   
+    }]    
+}
+,{    
+    "text":"人工服务",    
+    "state":"closed",    
+    "children":[{    
+        "text":"手机验证码",
+         "attributes":{    
+            "url":"/bms/getServiceCode",    
+            "price":100    
+        }   
+    }]    
+}
+,{    
+    "text":"对账表",    
+    "state":"closed",    
+    "children":[{    
+        "text":"收入",
+         "attributes":{    
+            "url":"/bms/Reconciliation/proceedsList",    
+            "price":100    
+        }   
+    },{    
+        "text":"支出",
+         "attributes":{    
+            "url":"/bms/Reconciliation/expenditureList",    
+            "price":100 
+            }          
+    },{    
+        "text":"总明细",
+         "attributes":{    
+            "url":"/bms/Reconciliation/detailsList",    
+            "price":100 
+            }          
+    }]    
+}
+]  
+

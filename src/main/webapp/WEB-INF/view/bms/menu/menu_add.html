@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>菜单添加</title>
+</head>
+<body>
+
+
+  <form id="f_add" method="post">
+    <table>
+     <tr>
+     <td align="right">所属上级<font color="red">*</font>:
+        </td>
+        <td><input name="parentId" class="easyui-combotree"
+          data-options="url:'/ajax/bms/menu/addTree',method:'get'" style="width:300px"></td>
+      </tr>
+      <tr>
+        <td align="right">是否最终<font color="red">*</font>:
+        </td>
+        <td><input name="isFinal" value="1" type="radio" />否&nbsp;&nbsp;<input
+          name="isFinal" value="0" type="radio" checked="checked" />是</td>
+      </tr>
+      <tr>
+        <td align="right">名称<font color="red">*</font>:
+        </td>
+        <td><input name="name" /></td>
+      </tr>
+      <tr>
+        <td align="right">url:
+        </td>
+        <td><input name="url" /></td>
+      </tr>
+      <tr>
+        <td align="right">描述:</td>
+        <td><textarea name="description" rows="3" cols="30"></textarea></td>
+      </tr>
+    </table>
+
+    <p>
+      <input type="submit" value="提交" />
+    </p>
+  </form>
+
+  <script type="text/javascript">
+			var $sel_tree = $('#sel_tree');
+			(function() {
+				f_add_init();
+
+				/* $sel_tree.combotree({
+					url : "/ajax/bms/sys/menu/combotree"
+				}); */
+			})();
+
+			function f_add_init() {
+				$("#f_add").validate({
+					rules : {
+						"parentId" : {
+							required : true
+						},
+						"isFinal" : {
+							required : true
+						},
+						"name" : {
+							required : true
+						}
+					},
+					success : function() {
+					},
+					errorPlacement : function(error, element) {
+						if ('' != $(error).html()) {
+							$(element).tooltip({
+								position : 'right',
+								content : $(error).html(),
+								hideEvent : null
+							}).tooltip('show').tooltip('tip').css({
+								backgroundColor : '#fa8072',
+								borderColor : '#fa8072'
+							});
+						} else {
+							$(element).tooltip('destroy');
+						}
+					},
+					submitHandler : function(form) {//表单的正常跳转页面
+						
+						f_add_submit(form);
+					}
+				});
+			}
+
+			function f_add_submit(form) {
+				$(form).find("input[type='submit']").attr("disabled",
+						"disabled").val("提交中...");
+				$(form).ajaxSubmit(
+						{
+							url : '/ajax/bms/menu/add',
+							type : "post",
+							
+							dataType : "json",
+							
+							success: function(data){
+								$.messager.alert('系统提示', "菜单添加成功！", 'info');
+								closeW(WAddId);
+								$dg.datagrid('reload');
+						    },
+						    error:function(){
+						    	$.messager.alert('系统提示', "error！", 'info');
+					 	    } 
+						});
+				
+				window.location.href=window.location.href;
+			}
+			
+			
+		</script>
+
+</body>
+</html>
